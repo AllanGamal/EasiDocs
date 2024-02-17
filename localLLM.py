@@ -25,7 +25,8 @@ class LocalLLM:
 # Skapa en instans av din anpassade klass
 llm = LocalLLM()
 
-
+'''
 question = "What is the capital of Sweden?"
 answer = llm.answer_question(question)
 print(f"Answer: {answer}")
+'''
