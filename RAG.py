@@ -5,7 +5,6 @@ from Embeddings import MiniLMEmbeddings
 from localLLM import LocalLLM
 from langchain_community.document_loaders import PyPDFLoader
 from PyPDF2 import PdfReader
-from langchain.text_splitter import CharacterTextSplitter
 
 
 
@@ -22,36 +21,39 @@ def loader(file):
     return documents
 
 document = loader("test.pdf")
-doc_reader = PdfReader('test.pdf')
 print(document)
 print("---------------------------------------------------------")
-# read data from the file and put them into a variable called raw_text
-raw_text = ''
-for i, page in enumerate(document):
-    raw_text += f"\nPage {i+1}\n" + "---------------------------------------------------------\n" # print the page number
-    content = page.page_content
-    raw_text += content
-    
-    
-    
 
+# Extracting text from the document and returning it as a string
+def extract_text(document):
+    raw_text = ''
+    for i, page in enumerate(document):
+        raw_text += f"\nPage {i+1}\n" + "---------------------------------------------------------\n" # print the page number
+        content = page.page_content
+        raw_text += content
+    return raw_text
+
+raw_text = extract_text(document)
 print(raw_text)
 
-
-
-
-def split_docs(documents, chunk_size=500, chunk_overlap=50): # not working
+# Text Splitter
+#This takes the text and splits it into chunks. The chunk size is characters not tokens
+def split_doc(document, chunk_size=900, chunk_overlap=90): # 
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
     )
-    docs = text_splitter.split_documents(documents)
+    docs = text_splitter.split_documents(document)
     return docs
 
 
-docs = split_docs(doc_reader)
-docs_embeddings = embeddings.embed_documents(docs)
+docs = split_doc(document)
+print("---------------------------------------------------------")
+print(docs[0])
+print(docs[1])
 
+print("---------------------------------------------------------")
+docs_embeddings = embeddings.embed_documents(docs)
 
 db = Chroma.from_documents(
     documents=docs_embeddings, 
