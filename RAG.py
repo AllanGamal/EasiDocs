@@ -1,10 +1,12 @@
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import Chroma
 from langchain.chains.question_answering import load_qa_chain
 from Embeddings import MiniLMEmbeddings
-from localLLM import LocalLLM
+from LocalLLM import LocalLLM
 from langchain_community.document_loaders import PyPDFLoader
-from PyPDF2 import PdfReader
+import chromadb
+from langchain_community.llms import Ollama
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 
@@ -12,7 +14,7 @@ from PyPDF2 import PdfReader
 embeddings = MiniLMEmbeddings()
 
 
-llm = LocalLLM(base_url="http://localhost:1234/v1")
+llm = Ollama(model="mistral")
 
 
 def loader(file):
@@ -21,7 +23,7 @@ def loader(file):
     return documents
 
 document = loader("test.pdf")
-print(document)
+##print(document)
 print("---------------------------------------------------------")
 
 # Extracting text from the document and returning it as a string
@@ -51,20 +53,71 @@ docs = split_doc(document)
 print("---------------------------------------------------------")
 print(docs[0])
 print(docs[1])
-
+print(docs[2].page_content)
 print("---------------------------------------------------------")
+"""
+def collect_page_contents(docs):
+    split_text = []
+    for doc in docs:
+        split_text.append(doc.page_content)
+    return split_text
+"""
+
+
+##dirty_split_text = collect_page_contents(docs)
+
+def clean_docs(docs):
+    for doc in docs:
+        doc.page_content = doc.page_content.replace("\n", " ").replace("\t", " ")
+    
+
+print(docs[0])
+clean_docs(docs)
+print("---------------------------------------------------------")
+print(docs[0])
+print("---------------------------------------------------------")
+# print type of docs
+print(type(docs[0]))    
+
+chroma_client = chromadb.Client()
+
 docs_embeddings = embeddings.embed_documents(docs)
+collection = chroma_client.create_collection(name="my_collection")
+def add_documents_to_collection(docs, docs_embeddings, collection):
+    for i, (doc, embedding) in enumerate(zip(docs, docs_embeddings)):
+        # i used for the doc_id  
+        doc_id = str(i)
+
+        collection.add(
+            ids=[doc_id],  # doc ID
+            documents=[doc.page_content],  # doc text
+            embeddings=[embedding.tolist()],  # convert to numpy array, then to list
+            metadatas=[doc.metadata]  # metadata
+        )
+        print(embedding.tolist())
+
+
+add_documents_to_collection(docs, docs_embeddings, collection)
+
+
+'''
+print(docs_embeddings)
 
 db = Chroma.from_documents(
-    documents=docs_embeddings, 
+    documents=docs, 
     embedding=embeddings
 )
+'''
 
 chain = load_qa_chain(llm, chain_type="stuff")
 
 def get_answer(query):
-    similar_docs = db.similarity_search(query, k=2) # get two closest chunks
-    answer = chain.run(input_documents=similar_docs, question=query)
+    # get two closest chunks
+    answer = collection.query(
+        query_texts=[query],
+        n_results=1
+    )
+  
     return answer
     
 print("Doc chatbot, chat with your docs!")

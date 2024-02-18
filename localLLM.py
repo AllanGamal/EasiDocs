@@ -1,32 +1,32 @@
 import openai
+from langchain.llms import BaseLLM
 
-class LocalLLM:
+class LocalLLM(BaseLLM):
     def __init__(self, base_url="http://localhost:1234/v1"):
-        # Client config
+        super().__init__()
         self.client = openai.OpenAI(base_url=base_url, api_key="not-needed")
 
-    def answer_question(self, question, context=None):
-        
+    def _generate(self, prompt, **kwargs):
+        # Denna metod bör anropa OpenAI's API och returnera svaret
         try:
             completion = self.client.chat.completions.create(
-                model="local-model",  # the name of  local model
+                model="local-model",
                 messages=[
                     {"role": "system", "content": "Your system message here, if any."},
-                    {"role": "user", "content": question}
+                    {"role": "user", "content": prompt}
                 ],
-                temperature=0.7,  # creativity meter
+                temperature=0.7,  # Anpassa efter behov
             )
-            
-            return completion.choices[0].message.content 
+            return completion.choices[0].message.content
         except Exception as e:
             print(f"An error occurred: {e}")
-            return "I'm sorry, I encountered an error and can't provide an answer."
+            return None
 
-# Skapa en instans av din anpassade klass
-llm = LocalLLM()
+    def _llm_type(self):
+        # Denna metod bör returnera en sträng som representerar typen av LLM. Detta är ett exempel:
+        return "LocalLLM"
 
-'''
-question = "What is the capital of Sweden?"
-answer = llm.answer_question(question)
-print(f"Answer: {answer}")
-'''
+    # 'run'-metoden kan behållas om den behövs för andra syften,
+    # men '_generate'-metoden är den som används av 'BaseLLM' för att generera text.
+    def run(self, prompt, **kwargs):
+        return self._generate(prompt, **kwargs)
