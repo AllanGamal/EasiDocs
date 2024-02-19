@@ -5,8 +5,7 @@ from LocalLLM import LocalLLM
 from langchain_community.document_loaders import PyPDFLoader
 import chromadb
 from langchain_community.llms import Ollama
-from langchain.chains import RetrievalQA
-from langchain.vectorstores import Chroma
+from langchain_community.vectorstores import Chroma
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 # import
@@ -14,6 +13,8 @@ from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
 )
 from langchain_community.vectorstores import Chroma
+from transformers import AutoTokenizer, AutoModel
+
 
 
 # initializing the embeddings
@@ -42,11 +43,11 @@ def extract_text(document):
     return raw_text
 
 raw_text = extract_text(document)
-print(raw_text)
+#print(raw_text)
 
 # Text Splitter
 #This takes the text and splits it into chunks. The chunk size is characters not tokens
-def split_doc(document, chunk_size=900, chunk_overlap=90): # 
+def split_doc(document, chunk_size=1000, chunk_overlap=120): # 
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
@@ -57,7 +58,6 @@ def split_doc(document, chunk_size=900, chunk_overlap=90): #
 
 docs = split_doc(document)
 print("---------------------------------------------------------")
-print(docs[0])
 print("---------------------------------------------------------")
 """
 def collect_page_contents(docs):
@@ -78,7 +78,6 @@ def clean_docs(docs):
 
 clean_docs(docs)
 print("---------------------------------------------------------")
-print(docs[0])
 print("---------------------------------------------------------")
 # print type of docs
 print(type(docs[0]))    
@@ -94,19 +93,39 @@ page_contents = listOfAllThePageContents(docs)
 chroma_client = chromadb.Client()
 
 docs_embeddings = embeddings.embed_documents(docs)
-embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
-print(docs[0])
+
+
+#embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
+embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
+
+#print(docs[0])
+
 
 db = Chroma.from_documents(
     docs,
-    embedding_function
+    embedding_function,
+    
 )
+
 print("2")
 
 query = "What kind of technologies are reshaping education systems? "
-#query = "Vilka teknologier omformar utbildningssystemen?"
-docs = db.similarity_search(query, k=2)
+query_sv = "Vilka teknologier omformar utbildningssystemen?"
+docs = db.similarity_search(query, k=3)
+docs_sv = db.similarity_search(query_sv, k=3)
+print("")
+print("")
+print("")
 print(docs[0])
+print("---------------------------------------------------------------------------------------------------------------------------------")
+print(docs[1])
+print("---------------------------------------------------------------------------------------------------------------------------------")
+print("")
+print("---------------------------------------------------------------------------------------------------------------------------------")
+print(docs_sv[0])
+print("---------------------------------------------------------------------------------------------------------------------------------")
+print(docs_sv[1])
+
 
 
 
