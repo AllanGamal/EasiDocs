@@ -95,30 +95,19 @@ chroma_client = chromadb.Client()
 
 docs_embeddings = embeddings.embed_documents(docs)
 embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
-print("1")
+print(docs[0])
 
 db = Chroma.from_documents(
     docs,
     embedding_function
 )
 print("2")
-# expose this index in a retriever interface
-retriever = db.as_retriever(search_type="similarity", search_kwargs={"k":2})
 
-#query = "What kind of technologies are reshaping education systems? "
-query = "Vilka teknologier omformar utbildningssystemen?"
-docs = db.similarity_search(query)
-print(docs[0].page_content)
+query = "What kind of technologies are reshaping education systems? "
+#query = "Vilka teknologier omformar utbildningssystemen?"
+docs = db.similarity_search(query, k=2)
+print(docs[0])
 
-print("3")
-# create a chain to answer questions 
-qa = RetrievalQA.from_chain_type(
-    llm=llm, chain_type="stuff", retriever=retriever, return_source_documents=True)
-print("4")
-query = "what is the total number of AI publications?"
-print("5")
-result = qa({"query": query})
-print("6")
 
 
 '''
