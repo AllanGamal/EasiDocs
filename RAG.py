@@ -8,7 +8,7 @@ from langchain_community.embeddings.sentence_transformer import (
 from langchain_community.vectorstores import Chroma
 import document_ingestion as document_ingestion
 from langchain.chains import RetrievalQA
-from langchain.prompts import PromptTemplate
+from prompt_template import prompt as prompt
 
 
 
@@ -29,7 +29,8 @@ page_contents = document_ingestion.get_page_contents(docs)
 
 embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
 
-
+import time
+start = time.time()
 # initialize the vector store/db
 db = Chroma.from_documents(
         docs,
@@ -39,36 +40,9 @@ db = Chroma.from_documents(
 
 
 
+retriever = db.as_retriever(search_kwargs={"k": 4}) # k=3 => 3 sources
 
-
-
-template = '''
-If you don't know the answer, just say that you don't know.
-Don't try to make up an answer. Answer ONLY in whatever language you get the question in.
-Never quote sources.
-{context}
-
-%s
-
-Question: {question}
-Answer in %s :
-'''
-
-persona = "" #"Respond in the persona of a goofy person"
-language = ["Swedish", "English"]
-prompt = PromptTemplate(
-    template=template % (persona, language[1]),
-    input_variables=[
-        'context', 
-        'question'
-    ]
-)
-import time
-start = time.time()
-
-retriever = db.as_retriever(search_kwargs={"k": 3}) # k=3 => 3 sources
-
-
+prompt = prompt()
 qa = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff", 
@@ -81,7 +55,7 @@ end = time.time()
 print("Time elapsed: ", end - start)
 
 #query_en = "What kind of technologies are reshaping education systems? "
-query_en = "Are EV manufacturing doing well?"
+query_en = "Why are EV manufacturers retracting from the EV market"
 query_sv = "Vilka teknologier omformar utbildningssystemen?"
 
 result = qa.invoke(query_en)
