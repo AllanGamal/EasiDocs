@@ -7,12 +7,17 @@ from langchain_community.llms import Ollama
 from langchain_community.vectorstores import Chroma
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
+from langchain_community.document_loaders import UnstructuredWordDocumentLoader
+from langchain_community.document_loaders import Docx2txtLoader
 # import
 from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
 )
 from langchain_community.vectorstores import Chroma
-from transformers import AutoTokenizer, AutoModel
+from langchain_community.document_loaders import Docx2txtLoader
+from langchain_community.document_loaders import TextLoader
+
+
 
 
 
@@ -22,13 +27,24 @@ from transformers import AutoTokenizer, AutoModel
 
 llm = Ollama(model="mistral")
 
-
-def load_document(file):
+def load_pdf(file):
     loader = PyPDFLoader(file)
     documents = loader.load()
     return documents
 
-document = load_document("test.pdf")
+def load_document(file):
+    if (file.endswith(".docx") | file.endswith(".doc")):
+        return UnstructuredWordDocumentLoader(file, mode="single").load()
+    if (file.endswith(".pdf")):
+        return PyPDFLoader(file).load()
+    if (file.endswith(".txt") | file.endswith(".md")):
+        return TextLoader(file).load()
+    
+    return ValueError("File type not supported")
+
+
+
+document = load_document("test.md")
 
 
 #takes the text and splits it into chunks.
