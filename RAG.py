@@ -1,7 +1,3 @@
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.chains.question_answering import load_qa_chain
-from LocalLLM import LocalLLM
-from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.llms import Ollama
 from langchain_community.vectorstores import Chroma
 import os
@@ -11,7 +7,6 @@ from langchain_community.embeddings.sentence_transformer import (
 )
 from langchain_community.vectorstores import Chroma
 import document_ingestion as document_ingestion
-import embedding as embedding
 
 
 
