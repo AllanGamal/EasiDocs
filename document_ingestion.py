@@ -23,7 +23,7 @@ def load_document_batch(files):
     return documents
 
 #takes the text and splits it into chunks.
-def split_document(document, chunk_size=650, chunk_overlap=150): # 
+def split_document(document, chunk_size=800, chunk_overlap=160): # 
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
