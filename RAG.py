@@ -16,6 +16,7 @@ from langchain_community.document_loaders import TextLoader
 
 
 
+
 llm = Ollama(model="mistral")
 
 def load_pdf(file):
@@ -34,9 +35,15 @@ def load_document(file):
     
     return ValueError("File type not supported")
 
+def load_document_batch(files):
+    documents = []
+    for file in files:
+        documents.append(load_document(file))
+    return documents
 
 document = load_document("test.pdf")
-
+#documents = load_document_batch(["test.pdf", "test.docx", "test.txt"])
+#document = load_document("test.txt")
 
 #takes the text and splits it into chunks.
 def split_document(document, chunk_size=650, chunk_overlap=150): # 
@@ -45,6 +52,14 @@ def split_document(document, chunk_size=650, chunk_overlap=150): #
         chunk_overlap=chunk_overlap,
     )
     docs = text_splitter.split_documents(document)
+    return docs
+
+def split_document_batch(documents):
+    docs = []
+    for doc in documents:
+        chunks = split_document(doc)  # returns a list of Document objects
+        for chunk in chunks:  # adds each chunk to the list of documents
+            docs.append(chunk)
     return docs
 
 
