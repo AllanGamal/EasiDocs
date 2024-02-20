@@ -8,7 +8,7 @@ from langchain_community.embeddings.sentence_transformer import (
 from langchain_community.vectorstores import Chroma
 import document_ingestion as document_ingestion
 from langchain.chains import RetrievalQA
-
+from langchain.prompts import PromptTemplate
 
 
 
@@ -37,26 +37,50 @@ db = Chroma.from_documents(
     )
 
 
-print("2")
+
 
 query_en = "What kind of technologies are reshaping education systems? "
 query_sv = "Vilka teknologier omformar utbildningssystemen?"
 
 
+template = '''
+If you don't know the answer, just say that you don't know.
+Don't try to make up an answer. Answer ONLY in whatever language you get the question in.
+Never quote sources.
+{context}
+
+%s
+
+Question: {question}
+Answer in %s :
+'''
+
+persona = "" #"Respond in the persona of a goofy person"
+language = ["Swedish", "English"]
+prompt = PromptTemplate(
+    template=template % (persona, language[1]),
+    input_variables=[
+        'context', 
+        'question'
+    ]
+)
 
 retriever = db.as_retriever(search_kwargs={"k": 3}) # k=3 => 3 sources
-
 
 qa = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff", 
     retriever=retriever, # 3 sources
-    return_source_documents=True
+    return_source_documents=True,
+    chain_type_kwargs={"prompt": prompt}
 )
 
-result = qa(query_en)
+
+result = qa.invoke(query_sv)
+
 answer = result["result"]
 sources = result["source_documents"]
+
 
 
 print("-----------------------------------------------------------------------------------------------------------------------")
@@ -67,9 +91,4 @@ for source in sources:
     print(source)
     print("-----------------------------------------------------------------------------------------------------------------------")
 print("-----------------------------------------------------------------------------------------------------------------------")
-
-
-
-
-
 
