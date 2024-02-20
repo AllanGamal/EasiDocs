@@ -34,7 +34,7 @@ def load_pdf(file):
 
 def load_document(file):
     if (file.endswith(".docx") | file.endswith(".doc")):
-        return UnstructuredWordDocumentLoader(file, mode="single").load()
+        return UnstructuredWordDocumentLoader(file).load()
     if (file.endswith(".pdf")):
         return PyPDFLoader(file).load()
     if (file.endswith(".txt") | file.endswith(".md")):
