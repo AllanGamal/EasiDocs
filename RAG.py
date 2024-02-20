@@ -8,20 +8,11 @@ from langchain_community.vectorstores import Chroma
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 from langchain_community.document_loaders import UnstructuredWordDocumentLoader
-from langchain_community.document_loaders import Docx2txtLoader
-# import
 from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
 )
 from langchain_community.vectorstores import Chroma
-from langchain_community.document_loaders import Docx2txtLoader
 from langchain_community.document_loaders import TextLoader
-
-
-
-
-
-# initializing the embeddings
 
 
 
@@ -32,6 +23,7 @@ def load_pdf(file):
     documents = loader.load()
     return documents
 
+# supports .docx, .doc, .pdf, .txt, .md
 def load_document(file):
     if (file.endswith(".docx") | file.endswith(".doc")):
         return UnstructuredWordDocumentLoader(file).load()
@@ -43,8 +35,7 @@ def load_document(file):
     return ValueError("File type not supported")
 
 
-
-document = load_document("test.md")
+document = load_document("test.pdf")
 
 
 #takes the text and splits it into chunks.
