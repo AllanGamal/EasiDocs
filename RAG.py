@@ -79,9 +79,9 @@ query_en = "Why are EV manufacturers retracting from the EV market"
 query_sv = "Vilka teknologier omformar utbildningssystemen?"
 query2_en = "Have AR or VR revealed any potential in the education sector?"
 print("QUESTION")
-print(query_sv)
+print(query_en)
 
-result = qa.invoke(query_sv)
+result = qa.invoke(query_en)
 
 answer = result["result"]
 sources = result["source_documents"]
