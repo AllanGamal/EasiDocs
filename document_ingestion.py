@@ -16,11 +16,14 @@ def load_document(file):
     
     return ValueError("File type not supported")
 
+
 def load_document_batch(files):
     documents = []
     for file in files:
         documents.append(load_document(file))
     return documents
+document = load_document_batch(["pdf/test.pdf"])
+print(document[0])
 
 #takes the text and splits it into chunks.
 def split_document(document, chunk_size=800, chunk_overlap=160): # 
