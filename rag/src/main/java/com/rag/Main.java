@@ -6,9 +6,9 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         // make an object of the class
-        DocumentIngester obj = new DocumentIngester();
+        DocumentIngester documentIngester = new DocumentIngester();
 
-        obj.ingestDocument("/Users/allangamal/Documents/GitHub/EasiDocs/test.txt");
+        documentIngester.loadSplitAndCleanText("/Users/allangamal/Documents/GitHub/EasiDocs/test.txt");
 
 
 

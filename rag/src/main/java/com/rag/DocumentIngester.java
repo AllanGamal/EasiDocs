@@ -4,7 +4,6 @@ import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentParser;
 import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
 import dev.langchain4j.data.document.parser.apache.pdfbox.ApachePdfBoxDocumentParser;
-import dev.langchain4j.data.document.parser.apache.pdfbox.ApachePdfBoxDocumentParser;
 import dev.langchain4j.data.document.parser.apache.poi.ApachePoiDocumentParser;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.document.DocumentSplitter;
@@ -16,13 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 
 public class DocumentIngester {
 
-    public String ingestDocument(String path) throws IOException {
+    public List<TextSegment> loadSplitAndCleanText(String path) throws IOException {
 
         // load the document
         Document document = generalDocumentLoader(path);
@@ -31,31 +27,25 @@ public class DocumentIngester {
         // split the document
         List<TextSegment> segments = splitDocument(document);
         
-        // clean the segments
+        // clean the segments in place
         cleanSegments(segments);
         //System.out.println(segments);
         
-        for (TextSegment segment : segments) {
-            System.out.println(" ");
-            System.out.println(segment.text());
-            System.out.println(" ");
-            
-        }
 
-
-        return document.toString();
+        return segments;
     }
 
-    public void cleanSegments(List<TextSegment> segments) {
+
+    private void cleanSegments(List<TextSegment> segments) {
         List<TextSegment> cleanedSegments = new ArrayList<>();
         for (TextSegment segment : segments) {
             String cleanedContent = segment.text().replaceAll("\t", " ").replaceAll("\n", " ");
-            TextSegment cleanedSegment = new TextSegment(cleanedContent, segment.metadata());
+            TextSegment cleanedSegment = new TextSegment(cleanedContent, segment.metadata()); // create new segment with cleaned content
             cleanedSegments.add(cleanedSegment);
         }
         // clear segments and add the cleaned segments
         segments.clear();
-        segments.addAll(cleanedSegments);
+        segments.addAll(cleanedSegments); 
     }
     
 
@@ -63,8 +53,8 @@ public class DocumentIngester {
 
 
 
-    public Document generalDocumentLoader(String path) throws IOException {
-        // if the file is a pdf
+    private Document generalDocumentLoader(String path) throws IOException {
+        
         Path filePath = Paths.get(path);
         Document document = null;
 
@@ -83,7 +73,7 @@ public class DocumentIngester {
     }
 
 
-    public List<TextSegment> splitDocument(Document document) {
+    private List<TextSegment> splitDocument(Document document) {
         DocumentSplitter splitter = DocumentSplitters.recursive(
                 850,
                 170);
