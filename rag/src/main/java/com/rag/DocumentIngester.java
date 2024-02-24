@@ -15,6 +15,11 @@ import dev.langchain4j.data.segment.TextSegment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.swing.text.Segment;
+
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -29,28 +34,41 @@ public class DocumentIngester {
         // split the document
         List<TextSegment> segments = splitDocument(document);
         
-        
         // clean the segments in place
         cleanSegments(segments);
-
-
-        System.out.println(segments);
-
-        
 
         return segments;
     }
 
     public List<TextSegment> loadSplitAndCleanTextFromFolder(String folderPath) throws IOException {
         List<TextSegment> allSegments = new ArrayList<>();
-        // get all the files in the folder
-        List<Path> filePaths = new ArrayList<>();
-        Files.walk(Paths.get(folderPath)).filter(Files::isRegularFile).forEach(filePaths::add);
-        // load, split and clean each file
-        for (Path filePath : filePaths) {
-            List<TextSegment> segments = loadSplitAndCleanText(filePath.toString());
-            allSegments.addAll(segments);
+        
+        Path startPath = Paths.get(folderPath);
+
+        try (Stream<Path> stream = Files.walk(startPath)) {
+            List<Path> filePaths = stream
+                .filter(Files::isRegularFile)
+                .filter(path -> path.toString().endsWith(".pdf") || 
+                path.toString().endsWith(".docx") || 
+                path.toString().endsWith(".txt") || 
+                path.toString().endsWith(".md"))
+                .collect(Collectors.toList()); // collect the paths into a list
+
+            // load, split and clean each file
+            for (Path filePath : filePaths) {
+                List<TextSegment> segments = loadSplitAndCleanText(filePath.toString());
+                allSegments.addAll(segments);
+            }
         }
+
+
+        for (TextSegment segment : allSegments) {
+            System.out.println(segment);
+        }
+
+
+
+       
         
         return allSegments;
     }
