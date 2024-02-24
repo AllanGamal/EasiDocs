@@ -8,7 +8,7 @@ public class Main {
         // make an object of the class
         DocumentIngester obj = new DocumentIngester();
 
-        obj.ingestDocument("/Users/allangamal/Documents/GitHub/EasiDocs/test.pdf");
+        obj.ingestDocument("/Users/allangamal/Documents/GitHub/EasiDocs/test.txt");
 
 
 

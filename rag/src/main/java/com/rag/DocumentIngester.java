@@ -11,6 +11,8 @@ import dev.langchain4j.data.document.DocumentSplitter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import dev.langchain4j.data.segment.TextSegment;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,6 +24,46 @@ public class DocumentIngester {
 
     public String ingestDocument(String path) throws IOException {
 
+        // load the document
+        Document document = generalDocumentLoader(path);
+        //System.out.println(document);
+
+        // split the document
+        List<TextSegment> segments = splitDocument(document);
+        
+        // clean the segments
+        cleanSegments(segments);
+        //System.out.println(segments);
+        
+        for (TextSegment segment : segments) {
+            System.out.println(" ");
+            System.out.println(segment.text());
+            System.out.println(" ");
+            
+        }
+
+
+        return document.toString();
+    }
+
+    public void cleanSegments(List<TextSegment> segments) {
+        List<TextSegment> cleanedSegments = new ArrayList<>();
+        for (TextSegment segment : segments) {
+            String cleanedContent = segment.text().replaceAll("\t", " ").replaceAll("\n", " ");
+            TextSegment cleanedSegment = new TextSegment(cleanedContent, segment.metadata());
+            cleanedSegments.add(cleanedSegment);
+        }
+        // clear segments and add the cleaned segments
+        segments.clear();
+        segments.addAll(cleanedSegments);
+    }
+    
+
+    
+
+
+
+    public Document generalDocumentLoader(String path) throws IOException {
         // if the file is a pdf
         Path filePath = Paths.get(path);
         Document document = null;
@@ -33,37 +75,21 @@ public class DocumentIngester {
         } else if (path.endsWith(".txt") || path.endsWith(".md")) {
 
             String content = new String(Files.readAllBytes(filePath));
-            String normalizedContent = content.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
-
-            document = new Document(normalizedContent);
+            document = new Document(content);
+            System.out.println(document);
         }
 
-        document = cleanDocument(document);
-        DocumentSplitter splitter = DocumentSplitters.recursive(
-                2112,
-                100);
-
-        List<TextSegment> segments = splitter.split(document);
-        // System.out.println(segments);
-
-        for (TextSegment segment : segments) {
-            System.out.println(segment);
-
-        }
-
-        return document.toString();
+        return document;
     }
 
-    public Document cleanDocument(Document document) {
-        // remove all the next row (\n) and tabs (\t)
-        String dirtyText = document.text();
 
-        String cleanedText = dirtyText.replaceAll("\t", " ").replaceAll("\n", " ");
+    public List<TextSegment> splitDocument(Document document) {
+        DocumentSplitter splitter = DocumentSplitters.recursive(
+                850,
+                170);
 
-        Document cleanedDocument = new Document(cleanedText, document.metadata());
-
-        return cleanedDocument;
-
+        List<TextSegment> segments = splitter.split(document);
+        return segments;
     }
 
     // main
