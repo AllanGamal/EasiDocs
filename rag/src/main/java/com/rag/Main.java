@@ -8,7 +8,8 @@ public class Main {
         // make an object of the class
         DocumentIngester documentIngester = new DocumentIngester();
 
-        documentIngester.loadSplitAndCleanText("/Users/allangamal/Documents/GitHub/EasiDocs/test.txt");
+        documentIngester.loadSplitAndCleanText("/Users/allangamal/Documents/GitHub/EasiDocs/test.md");
+        //documentIngester.loadSplitAndCleanTextFromFolder("/Users/allangamal/Documents/GitHub/EasiDocs/testFolder");
 
 
 

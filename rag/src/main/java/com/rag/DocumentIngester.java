@@ -7,6 +7,8 @@ import dev.langchain4j.data.document.parser.apache.pdfbox.ApachePdfBoxDocumentPa
 import dev.langchain4j.data.document.parser.apache.poi.ApachePoiDocumentParser;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.document.DocumentSplitter;
+import dev.langchain4j.data.document.Metadata;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import dev.langchain4j.data.segment.TextSegment;
@@ -27,12 +29,30 @@ public class DocumentIngester {
         // split the document
         List<TextSegment> segments = splitDocument(document);
         
+        
         // clean the segments in place
         cleanSegments(segments);
-        //System.out.println(segments);
+
+
+        System.out.println(segments);
+
         
 
         return segments;
+    }
+
+    public List<TextSegment> loadSplitAndCleanTextFromFolder(String folderPath) throws IOException {
+        List<TextSegment> allSegments = new ArrayList<>();
+        // get all the files in the folder
+        List<Path> filePaths = new ArrayList<>();
+        Files.walk(Paths.get(folderPath)).filter(Files::isRegularFile).forEach(filePaths::add);
+        // load, split and clean each file
+        for (Path filePath : filePaths) {
+            List<TextSegment> segments = loadSplitAndCleanText(filePath.toString());
+            allSegments.addAll(segments);
+        }
+        
+        return allSegments;
     }
 
 
@@ -57,16 +77,17 @@ public class DocumentIngester {
         
         Path filePath = Paths.get(path);
         Document document = null;
-
+        
+        Metadata metadata = new Metadata();
         if (path.endsWith(".pdf")) {
             document = FileSystemDocumentLoader.loadDocument(filePath, new ApachePdfBoxDocumentParser());
         } else if (path.endsWith(".docx")) {
             document = FileSystemDocumentLoader.loadDocument(filePath, new ApachePoiDocumentParser());
         } else if (path.endsWith(".txt") || path.endsWith(".md")) {
-
+            metadata.add("file_name", filePath.getFileName().toString());
             String content = new String(Files.readAllBytes(filePath));
-            document = new Document(content);
-            System.out.println(document);
+            document = new Document(content, metadata);
+            
         }
 
         return document;
