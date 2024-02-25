@@ -2,6 +2,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import UnstructuredWordDocumentLoader
 from langchain_community.document_loaders import TextLoader
+import json
+
 
 
 
@@ -15,6 +17,18 @@ def load_document(file):
         return TextLoader(file).load()
     
     return ValueError("File type not supported")
+documents = load_document("pdf/test.pdf")    
+documents_json = json.dumps([{'page_content': doc.page_content, 'metadata': doc.metadata} for doc in documents])
+with open('documents.json', 'w') as json_file:
+    json_file.write(documents_json)
+print(documents)
+print(documents[0].metadata)
+print(documents[0].page_content)
+print(documents[0].metadata.get("source"))
+print(documents[0].metadata.get("page"))
+print(documents_json)
+
+
 
 
 def load_document_batch(files):

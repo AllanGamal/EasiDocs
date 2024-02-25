@@ -1,7 +1,6 @@
 package com.rag;
 
 import dev.langchain4j.data.document.Document;
-import dev.langchain4j.data.document.DocumentParser;
 import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
 import dev.langchain4j.data.document.parser.apache.pdfbox.ApachePdfBoxDocumentParser;
 import dev.langchain4j.data.document.parser.apache.poi.ApachePoiDocumentParser;
@@ -18,14 +17,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.swing.text.Segment;
-
 import java.io.IOException;
 import java.nio.file.Files;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.lang.reflect.Type;
 
 public class DocumentIngester {
 
     public List<TextSegment> loadSplitAndCleanText(String path) throws IOException {
+
+
+        List<Document> documents = new ArrayList<>();
 
         // load the document
         Document document = generalDocumentLoader(path);
@@ -91,7 +96,7 @@ public class DocumentIngester {
 
 
 
-    private Document generalDocumentLoader(String path) throws IOException {
+    private static Document generalDocumentLoader(String path) throws IOException {
         
         Path filePath = Paths.get(path);
         Document document = null;
@@ -107,9 +112,41 @@ public class DocumentIngester {
             document = new Document(content, metadata);
             
         }
-
+        
         return document;
     }
+
+    // main
+
+    
+    
+        public static void main(String[] args) {
+            try {
+                // Läs innehållet från filen till en sträng
+                String jsonInput = new String(Files.readAllBytes(Paths.get("documents.json")));
+                //System.out.println(jsonInput);
+
+                Document document = new Document("Hello world", new Metadata());
+                System.out.println(document);
+    
+                // Använd Gson för att deserialisera JSON-strängen till dina objekt
+                Gson gson = new GsonBuilder()
+        .registerTypeAdapter(Document.class, new DocumentDeserializer())
+        .create();
+                Type listType = new TypeToken<List<Document>>(){}.getType();
+                List<Document> documents = gson.fromJson(jsonInput, listType);
+                System.out.println(documents);
+                // remove json file
+                Files.delete(Paths.get("documents.json"));
+               
+
+    
+                // Nu kan du använda 'documents'-listan som innehåller dina deserialiserade Document-objekt
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    
 
 
     private List<TextSegment> splitDocument(Document document) {

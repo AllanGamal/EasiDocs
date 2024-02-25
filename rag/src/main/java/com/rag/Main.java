@@ -9,7 +9,7 @@ public class Main {
         DocumentIngester documentIngester = new DocumentIngester();
 
         //documentIngester.loadSplitAndCleanText("/Users/allangamal/Documents/GitHub/EasiDocs/test.md");
-        documentIngester.loadSplitAndCleanTextFromFolder("/Users/allangamal/Documents/GitHub/EasiDocs/testFolder");
+        //documentIngester.loadSplitAndCleanTextFromFolder("/Users/allangamal/Documents/GitHub/EasiDocs/testFolder");
 
 
 
