@@ -6,13 +6,13 @@ from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
 )
 from langchain_community.vectorstores import Chroma
-import document_ingestion as document_ingestion
+
 from langchain.chains import RetrievalQA
 from prompt_template import prompt as prompt
 import os.path,subprocess
 from subprocess import STDOUT,PIPE
 from sys import stdin
-from docingesterTemp import test, load_document_batch
+
 
 
 llm = Ollama(model="mistral")

@@ -12,6 +12,7 @@ def load_document(file):
     if (file.endswith(".docx") | file.endswith(".doc")):
         return UnstructuredWordDocumentLoader(file).load()
     if (file.endswith(".pdf")):
+        
         return PyPDFLoader(file).load()
     if (file.endswith(".txt") | file.endswith(".md")):
         return TextLoader(file).load()
@@ -21,13 +22,14 @@ def load_document(file):
 
 
 
-
-def load_document_batch(files):
+def load_document_batchy(files):
+    print(files)
     documents = []
     for file in files:
         documents.append(load_document(file))
-    
+    print(documents)
     return documents
+load_document_batchy(["pdf/test.pdf"])
 
 
 #takes the text and splits it into chunks.
