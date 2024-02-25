@@ -26,6 +26,7 @@ def load_document_batch(files):
     documents = []
     for file in files:
         documents.append(load_document(file))
+    
     return documents
 
 

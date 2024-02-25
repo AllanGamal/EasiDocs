@@ -12,7 +12,8 @@
     <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-document-parser-apache-poi</artifactId>
-            <version>${project.version}</version>
+            <version>0.27.1</version>
+            
         </dependency>
 
         
@@ -62,12 +63,7 @@
             <version>0.27.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-document-parser-apache-poi</artifactId>
-            <version>0.27.1</version>
-            
-        </dependency>
+        
 
 </dependencies>
 

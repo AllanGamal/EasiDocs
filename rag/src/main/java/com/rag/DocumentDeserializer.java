@@ -24,12 +24,9 @@ class DocumentDeserializer implements JsonDeserializer<Document> {
         Metadata metadata = new Metadata();
 
         for (Map.Entry<String, JsonElement> entry : meta.entrySet()) {
-            // Antag att Metadata-klassen har en metod för att lägga till nya nyckel-värdepar.
             metadata.add(entry.getKey(), entry.getValue().getAsString());
         }
-
-        // Antag att du har en lämplig konstruktor eller metod för att sätta dessa fält
-        Document doc = new Document(pageContent, metadata);
-        return doc;
+         
+        return new Document(pageContent, metadata);
     }
 }

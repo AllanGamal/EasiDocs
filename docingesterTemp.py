@@ -3,6 +3,10 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import UnstructuredWordDocumentLoader
 from langchain_community.document_loaders import TextLoader
 import json
+from prompt_template import prompt as prompt
+import os.path,subprocess
+from subprocess import STDOUT,PIPE
+from sys import stdin
 
 # supports .docx, .doc, .pdf, .txt, .md
 def load_document(file):
@@ -42,16 +46,26 @@ def load_document_batch(files):
     documents = []
     for file in files:
         documents.append(load_document(file))
+    print(documents)
     return documents
+
+
+def test(files):
+    documents = load_document_batch(files)
+    print(documents)
+    command = ['mvn', 'exec:java', '-Dexec.mainClass=com.rag.Main']
+    project_root = 'rag'
+
+    # Kör Maven-kommandot
+    # blocking process
+
+
+    process = subprocess.Popen(command, cwd=project_root)
+    process.wait()
+    return documents
+
 
 load_document_batch(["pdf/test.pdf"])
 
 
 
-def load_document_batch(files):
-    documents = []
-    for file in files:
-        documents.append(load_document(file))
-    return documents
-    
-    return ValueError("File type not supported")
