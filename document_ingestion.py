@@ -2,7 +2,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import UnstructuredWordDocumentLoader
 from langchain_community.document_loaders import TextLoader
-import document_ingestion as di
+
 
 
 # supports .docx, .doc, .pdf, .txt, .md
@@ -22,8 +22,7 @@ def load_document_batch(files):
     for file in files:
         documents.append(load_document(file))
     return documents
-document = load_document_batch(["pdf/test.pdf"])
-print(document[0])
+
 
 #takes the text and splits it into chunks.
 def split_document(document, chunk_size=800, chunk_overlap=160): # 
