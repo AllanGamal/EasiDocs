@@ -116,28 +116,39 @@ public class DocumentIngester {
         return document;
     }
 
-    // main
+    public static List<Document> loadAndDeleteDocumentsFromJson(String filePath) throws IOException {
+        // Läs innehållet från filen till en sträng
+        String jsonInput = new String(Files.readAllBytes(Paths.get(filePath)));
+
+        // Använd Gson för att deserialisera JSON-strängen till Document-objekt
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Document.class, new DocumentDeserializer()) // Antag att du har en anpassad deserialiserare
+                .create();
+        Type listType = new TypeToken<List<Document>>(){}.getType();
+        List<Document> documents = gson.fromJson(jsonInput, listType);
+
+        // Ta bort JSON-filen efter deserialisering
+        Files.delete(Paths.get(filePath));
+
+        // Returnera listan av deserialiserade dokument
+        return documents;
+    }
+
 
     
     
-        public static void main(String[] args) {
+        public static void main(String[] args) throws InterruptedException {
             try {
-                // Läs innehållet från filen till en sträng
-                String jsonInput = new String(Files.readAllBytes(Paths.get("documents.json")));
-                //System.out.println(jsonInput);
-
-                Document document = new Document("Hello world", new Metadata());
-                System.out.println(document);
-    
-                // Använd Gson för att deserialisera JSON-strängen till dina objekt
-                Gson gson = new GsonBuilder()
-        .registerTypeAdapter(Document.class, new DocumentDeserializer())
-        .create();
-                Type listType = new TypeToken<List<Document>>(){}.getType();
-                List<Document> documents = gson.fromJson(jsonInput, listType);
+                ProcessBuilder pb = new ProcessBuilder("python3", "docingesterTemp.py");
+                Process p = pb.start();
+                int exitCode = p.waitFor();
+                List<Document> documents = loadAndDeleteDocumentsFromJson("documents.json");
+                if (exitCode != 0) {
+                    throw new RuntimeException("Python script exited with error code: " + exitCode);
+                }
                 System.out.println(documents);
-                // remove json file
-                Files.delete(Paths.get("documents.json"));
+                // print type of documents
+                System.out.println(documents.get(0).getClass());
                
 
     
