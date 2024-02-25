@@ -55,8 +55,13 @@ def load_document_batch(files):
     return documents
 
 
+def test(files):
+    documents = load_document_batch(files)
+    print(documents)
+    return documents
 
-load_document_batch(['pdf/test.pdf'])
+
+
 
 
 
