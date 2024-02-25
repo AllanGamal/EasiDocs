@@ -147,8 +147,7 @@ public class DocumentIngester {
                     throw new RuntimeException("Python script exited with error code: " + exitCode);
                 }
                 System.out.println(documents);
-                // print type of documents
-                System.out.println(documents.get(0).getClass());
+                
                
 
     
