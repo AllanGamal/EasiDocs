@@ -8,6 +8,7 @@ import os.path,subprocess
 from subprocess import STDOUT,PIPE
 from sys import stdin
 
+print("test")
 # supports .docx, .doc, .pdf, .txt, .md
 def load_document(file):
     new_documents = []
@@ -49,7 +50,6 @@ def load_document_batch(files):
     
     documents = []
     for file in files:
-        print(file)
         documents.append(load_document(file))
    
     return documents
@@ -57,11 +57,10 @@ def load_document_batch(files):
 
 def test(files):
     documents = load_document_batch(files)
-    print(documents)
     return documents
 
+print("test")
 
-
-
+documents = test(["pdf/test.pdf"])
 
 

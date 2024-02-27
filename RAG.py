@@ -8,10 +8,11 @@ from langchain_community.embeddings.sentence_transformer import (
 from langchain_community.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from prompt_template import prompt as prompt
-import os.path,subprocess
+import os.path
 from subprocess import STDOUT,PIPE
 from sys import stdin
-from docingesterTemp import test, load_document_batch
+import subprocess
+from docingesterTemp import test
 
 
 llm = Ollama(model="mistral")
@@ -23,11 +24,20 @@ llm = Ollama(model="mistral")
 
 #documents = document_ingestion.load_documents_from_folder("pdf")
 # define the documents
-documents = test(["pdf/test.pdf"])
+
 print("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––")
 
+test(["pdf/test.pdf"])
+command = ['mvn', 'exec:java', '-Dexec.mainClass=com.rag.Main']
+project_root = 'rag'
+
+     # Kör Maven-kommandot
+     # blocking process
 
 
+process = subprocess.Popen(command, cwd=project_root)
+process.wait()
+     
 
 
 '''

@@ -65,15 +65,18 @@ public class DocumentIngester {
         private static List<Document> loadDocumentsFromPythonScript() throws InterruptedException {
             System.out.println("Loading documents from Python script...");
             try {
-                ProcessBuilder pb = new ProcessBuilder("python3", "docingesterTemp.py");
-                Process p = pb.start();
-                int exitCode = p.waitFor();
-                if (exitCode != 0) {
-                    throw new RuntimeException("Python script exited with error code: " + exitCode);
-                }
-                List<Document> documents = loadDocumentsFromJsonWithCleanup("documents.json");
-                System.out.println(documents);
                 
+                System.out.println("t3");
+                System.out.println("documents");
+                // get the file names in my root folder:
+
+                
+                
+                List<Document> documents = loadDocumentsFromJsonWithCleanup("/documents.json");
+                
+                for (Document document : documents) {
+                    System.out.println(document);
+                }
 
                 return documents;
                 
