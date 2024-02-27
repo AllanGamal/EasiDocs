@@ -100,6 +100,7 @@ query2_en = "Have AR or VR revealed any potential in the education sector?"
 print("QUESTION")
 print(query_en)
 
+'''
 result = qa.invoke(query_en)
 
 answer = result["result"]
@@ -118,3 +119,4 @@ for source in sources:
 print("-----------------------------------------------------------------------------------------------------------------------")
 
 # stop the timer
+'''

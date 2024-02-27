@@ -8,7 +8,7 @@ import os.path,subprocess
 from subprocess import STDOUT,PIPE
 from sys import stdin
 
-print("test")
+
 # supports .docx, .doc, .pdf, .txt, .md
 def load_document(file):
     new_documents = []
@@ -59,7 +59,7 @@ def test(files):
     documents = load_document_batch(files)
     return documents
 
-print("test")
+
 
 documents = test(["pdf/test.pdf"])
 

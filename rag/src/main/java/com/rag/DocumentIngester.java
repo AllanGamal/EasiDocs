@@ -12,7 +12,7 @@ import java.nio.file.Files;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
+import java.nio.file.Path;
 import java.lang.reflect.Type;
 
 public class DocumentIngester {
@@ -23,8 +23,7 @@ public class DocumentIngester {
         List<TextSegment> segments = splitAllDocuments(documents);
 
         cleanSegments(segments);
-        System.out.println(segments);
-        System.out.println("segments");
+        
 
 
         return segments;
@@ -69,14 +68,18 @@ public class DocumentIngester {
                 System.out.println("t3");
                 System.out.println("documents");
                 // get the file names in my root folder:
+                Path currentPath = Paths.get("").toAbsolutePath();
+                if (currentPath != null) {
+                    System.out.println("Parent directory: " + currentPath.toString());
+                } else {
+                    System.out.println("Current path has no parent directory.");
+                }
 
                 
                 
-                List<Document> documents = loadDocumentsFromJsonWithCleanup("/documents.json");
+                List<Document> documents = loadDocumentsFromJsonWithCleanup("../documents.json");
                 
-                for (Document document : documents) {
-                    System.out.println(document);
-                }
+                
 
                 return documents;
                 
