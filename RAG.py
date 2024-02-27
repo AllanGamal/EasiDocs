@@ -6,10 +6,12 @@ from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
 )
 from langchain_community.vectorstores import Chroma
-import document_ingestion as document_ingestion
 from langchain.chains import RetrievalQA
 from prompt_template import prompt as prompt
-
+import os.path,subprocess
+from subprocess import STDOUT,PIPE
+from sys import stdin
+from docingesterTemp import test, load_document_batch
 
 
 llm = Ollama(model="mistral")
@@ -20,6 +22,13 @@ llm = Ollama(model="mistral")
 # load all documents in a folder
 
 #documents = document_ingestion.load_documents_from_folder("pdf")
+# define the documents
+documents = test(["pdf/test.pdf"])
+print("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––")
+
+
+
+
 
 '''
 documents = document_ingestion.load_document_batch(["pdf/22.pdf", "pdf/33.pdf", "pdf/46.pdf", "pdf/64.pdf", "pdf/180.pdf", "pdf/ark.pdf", "pdf/test.pdf"]) 
