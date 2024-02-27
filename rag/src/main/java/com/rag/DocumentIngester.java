@@ -65,47 +65,53 @@ public class DocumentIngester {
             System.out.println("Loading documents from Python script...");
             try {
                 
-                System.out.println("t3");
-                System.out.println("documents");
-                // get the file names in my root folder:
-                Path currentPath = Paths.get("").toAbsolutePath();
-                if (currentPath != null) {
-                    System.out.println("Parent directory: " + currentPath.toString());
-                } else {
-                    System.out.println("Current path has no parent directory.");
-                }
-
-                
                 
                 List<Document> documents = loadDocumentsFromJsonWithCleanup("../documents.json");
+                // write to a json
                 
+                Gson gson = new Gson();
+                String json = gson.toJson(documents);
+                Path path = Paths.get("../documents.json");
+                Files.write(path, json.getBytes());
+                
+                
+
+
+
                 
 
                 return documents;
                 
-               
+                
                 // Nu kan du använda 'documents'-listan som innehåller dina deserialiserade Document-objekt
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return null;
         }
-    
-
+        
+        
+        //[ Document { text = "ings of SID" metadata = {source=pdf/test.pdf, page=4} }, Document { text = "This is a test" metadata = {source=pdf/test.pdf, page=5} }]
 
    
 
     public static List<Document> loadDocumentsFromJsonWithCleanup(String filePath) throws IOException {
         // Läs innehållet från filen till en sträng
         String jsonInput = new String(Files.readAllBytes(Paths.get(filePath)));
+        
+        
 
         // Använd Gson för att deserialisera JSON-strängen till Document-objekt
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Document.class, new DocumentDeserializer()) // Antag att du har en anpassad deserialiserare
                 .create();
+        
+        
         Type listType = new TypeToken<List<Document>>(){}.getType();
         List<Document> documents = gson.fromJson(jsonInput, listType);
-
+        
+        
+        
         // Ta bort JSON-filen efter deserialisering
         Files.delete(Paths.get(filePath));
 

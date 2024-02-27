@@ -12,7 +12,8 @@ import os.path
 from subprocess import STDOUT,PIPE
 from sys import stdin
 import subprocess
-from docingesterTemp import test
+from docingesterTemp import load_document_batch
+
 
 
 llm = Ollama(model="mistral")
@@ -27,17 +28,18 @@ llm = Ollama(model="mistral")
 
 print("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––")
 
-test(["pdf/test.pdf"])
-command = ['mvn', 'exec:java', '-Dexec.mainClass=com.rag.Main']
-project_root = 'rag'
-
-     # Kör Maven-kommandot
-     # blocking process
+documents = load_document_batch(["pdf/test.pdf"])
 
 
-process = subprocess.Popen(command, cwd=project_root)
-process.wait()
+
+# cocument splitting and cleaning (running java code)
+def run_maven():
+    command = ['mvn', 'exec:java', '-Dexec.mainClass=com.rag.Main']
+    project_root = 'rag'
+    process = subprocess.Popen(command, cwd=project_root)
+    process.wait()
      
+run_maven()
 
 
 '''
@@ -47,12 +49,7 @@ document_ingestion.clean_documents(docs)
 '''
 
 
-
-
 #docs = document_ingestion.split_document(document)
-
-
-
 #page_contents = document_ingestion.get_page_contents(docs)
 
 embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
@@ -100,7 +97,7 @@ query2_en = "Have AR or VR revealed any potential in the education sector?"
 print("QUESTION")
 print(query_en)
 
-'''
+
 result = qa.invoke(query_en)
 
 answer = result["result"]
@@ -119,4 +116,3 @@ for source in sources:
 print("-----------------------------------------------------------------------------------------------------------------------")
 
 # stop the timer
-'''

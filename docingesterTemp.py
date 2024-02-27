@@ -22,7 +22,7 @@ def load_document(file):
 
     # skapa JSON från de nya dokumenten
     new_data = [{'page_content': doc.page_content, 'metadata': doc.metadata} for doc in new_documents]
-
+    print(new_data)
 
     # om fil redan finns
     if os.path.exists('documents.json'):
@@ -55,12 +55,9 @@ def load_document_batch(files):
     return documents
 
 
-def test(files):
-    documents = load_document_batch(files)
-    return documents
 
 
 
-documents = test(["pdf/test.pdf"])
+
 
 
