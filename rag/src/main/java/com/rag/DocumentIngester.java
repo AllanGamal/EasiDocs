@@ -67,16 +67,31 @@ public class DocumentIngester {
                 
                 
                 List<Document> documents = loadDocumentsFromJsonWithCleanup("../documents.json");
-                // write to a json
+                
                 
                 Gson gson = new Gson();
-                String json = gson.toJson(documents);
+                String json = "";
+
+                // put the text in the empty json file, with metadata (page and source) as objects
+                for (Document document : documents) {
+                    // get source 
+                    String source = document.metadata().get("source");
+                    // get page
+                    String page = document.metadata().get("page");
+                    String metastring = "metadata = {source=" + source + ", page=" + page + "}";
+                    json = json + "{" + gson.toJson(document.text()) + ", " + metastring + "}";
+                    // if not last document, add a comma
+                    if (documents.indexOf(document) != documents.size() - 1) {
+                        json = json + ", ";
+                    }
+                    
+
+                }
+                System.out.println(json);
+                
+                
                 Path path = Paths.get("../documents.json");
-                Files.write(path, json.getBytes());
                 
-                
-
-
 
                 
 
@@ -114,6 +129,7 @@ public class DocumentIngester {
         
         // Ta bort JSON-filen efter deserialisering
         Files.delete(Paths.get(filePath));
+        
 
         // Returnera listan av deserialiserade dokument
         return documents;
