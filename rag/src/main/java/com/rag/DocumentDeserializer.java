@@ -18,15 +18,38 @@ class DocumentDeserializer implements JsonDeserializer<Document> {
     @Override
     public Document deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
+        
+        
 
+        // Hämta page_content
         String pageContent = jsonObject.get("page_content").getAsString();
-        JsonObject meta = jsonObject.getAsJsonObject("metadata");
+       
+
+
+
+        // Hämta metadata-objektet
+        JsonObject metaObject = jsonObject.getAsJsonObject("metadata");
+        
+
+        // Skapa ett nytt Metadata-objekt
         Metadata metadata = new Metadata();
 
-        for (Map.Entry<String, JsonElement> entry : meta.entrySet()) {
+    
+        for (Map.Entry<String, JsonElement> entry : metaObject.entrySet()) {
             metadata.add(entry.getKey(), entry.getValue().getAsString());
         }
-         
-        return new Document(pageContent, metadata);
+
+        // Skapa och returnera ett nytt Document-objekt med insamlad data
+        Document document = new Document(pageContent, metadata);
+
+        // Skriv ut source och page från metadata
+    
+        
+
+        return document;
     }
+
+    
+
+    
 }

@@ -1,3 +1,5 @@
+
+'''
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import UnstructuredWordDocumentLoader
@@ -59,3 +61,4 @@ def get_page_contents(docs):
     for doc in docs:
         page_contents.append(doc.page_content)
     return page_contents
+'''

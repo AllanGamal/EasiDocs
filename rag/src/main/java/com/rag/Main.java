@@ -13,6 +13,7 @@ public class Main {
             DocumentIngester documentIngester = new DocumentIngester();
             List<TextSegment> segments = documentIngester.loadSplitAndCleanDocuments();
             
+            
         // make an object of the class
 
         // documentIngester.loadSplitAndCleanText("/Users/allangamal/Documents/GitHub/EasiDocs/test.md");

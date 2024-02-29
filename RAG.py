@@ -8,13 +8,18 @@ from langchain_community.embeddings.sentence_transformer import (
 from langchain_community.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from prompt_template import prompt as prompt
-import os.path,subprocess
+import os.path
 from subprocess import STDOUT,PIPE
 from sys import stdin
-from docingesterTemp import test, load_document_batch
+import subprocess
+from docingesterTemp import load_document_batch
+import json
+from langchain.docstore.document import Document
 
 
 llm = Ollama(model="mistral")
+
+
 
 
 #document = document_ingestion.load_document("ark.pdf")
@@ -23,10 +28,34 @@ llm = Ollama(model="mistral")
 
 #documents = document_ingestion.load_documents_from_folder("pdf")
 # define the documents
-documents = test(["pdf/test.pdf"])
+
 print("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––")
 
+load_document_batch(["pdf/ark.pdf"])
 
+
+# cocument splitting and cleaning (running java code)
+def run_maven():
+    command = ['mvn', 'exec:java', '-Dexec.mainClass=com.rag.Main']
+    project_root = 'rag'
+    process = subprocess.Popen(command, cwd=project_root)
+    process.wait()
+     
+run_maven()
+
+json_file_path = "documents.json"
+print(json_file_path)
+# Load and parse the JSON data from the file
+with open(json_file_path, 'r') as json_file:
+    documents_data = json.load(json_file)
+
+# Create a list of Document objects
+documents = [Document(page_content=doc.get('text'), metadata=doc.get('metadata')) for doc in documents_data]
+           
+# remove json
+os.remove(json_file_path)
+
+# lägg till page_content och metadata från json
 
 
 
@@ -37,12 +66,7 @@ document_ingestion.clean_documents(docs)
 '''
 
 
-
-
 #docs = document_ingestion.split_document(document)
-
-
-
 #page_contents = document_ingestion.get_page_contents(docs)
 
 embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
@@ -53,13 +77,13 @@ vector_dir = "chromadb/VectorStore"
 import time
 start = time.time()
 # initialize the vector store/db
-'''
+
 db = Chroma.from_documents(
-        docs,
+        documents,
         embedding_function,
         persist_directory=vector_dir, # save in chromadb folder
     )
-'''
+
 
 
 
@@ -69,7 +93,7 @@ db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function)
 
 
 
-retriever = db.as_retriever(search_kwargs={"k": 3}) # k=3 => 3 sources
+retriever = db.as_retriever(search_kwargs={"k": 5}) # k=3 => 3 sources
 
 prompt = prompt()
 qa = RetrievalQA.from_chain_type(
@@ -90,6 +114,7 @@ query2_en = "Have AR or VR revealed any potential in the education sector?"
 print("QUESTION")
 print(query_en)
 
+
 result = qa.invoke(query_en)
 
 answer = result["result"]
@@ -105,6 +130,6 @@ for source in sources:
     print("-----------------------------------------------------------------------------------------------------------------------")
     print(source)
     print("-----------------------------------------------------------------------------------------------------------------------")
-print("-----------------------------------------------------------------------------------------------------------------------")
+
 
 # stop the timer

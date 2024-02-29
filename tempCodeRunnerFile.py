@@ -1,1 +1,1 @@
-new_documents
+print(documents)

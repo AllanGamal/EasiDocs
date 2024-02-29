@@ -8,6 +8,7 @@ import os.path,subprocess
 from subprocess import STDOUT,PIPE
 from sys import stdin
 
+
 # supports .docx, .doc, .pdf, .txt, .md
 def load_document(file):
     new_documents = []
@@ -21,7 +22,7 @@ def load_document(file):
 
     # skapa JSON från de nya dokumenten
     new_data = [{'page_content': doc.page_content, 'metadata': doc.metadata} for doc in new_documents]
-
+    
 
     # om fil redan finns
     if os.path.exists('documents.json'):
@@ -49,16 +50,11 @@ def load_document_batch(files):
     
     documents = []
     for file in files:
-        print(file)
         documents.append(load_document(file))
    
-    return documents
+    
 
 
-def test(files):
-    documents = load_document_batch(files)
-    print(documents)
-    return documents
 
 
 
