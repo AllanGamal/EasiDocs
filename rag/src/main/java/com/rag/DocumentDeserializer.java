@@ -25,7 +25,7 @@ class DocumentDeserializer implements JsonDeserializer<Document> {
         String pageContent = jsonObject.get("page_content").getAsString();
        
 
-        System.out.println("-----------------");
+
 
         // Hämta metadata-objektet
         JsonObject metaObject = jsonObject.getAsJsonObject("metadata");
@@ -34,9 +34,7 @@ class DocumentDeserializer implements JsonDeserializer<Document> {
         // Skapa ett nytt Metadata-objekt
         Metadata metadata = new Metadata();
 
-        // Iterera över varje entry i metadata JSON-objektet och lägg till page och sour
-        String source = metaObject.get("source").getAsString();
-        String page = metaObject.get("page").getAsString();
+    
         for (Map.Entry<String, JsonElement> entry : metaObject.entrySet()) {
             metadata.add(entry.getKey(), entry.getValue().getAsString());
         }
@@ -45,8 +43,7 @@ class DocumentDeserializer implements JsonDeserializer<Document> {
         Document document = new Document(pageContent, metadata);
 
         // Skriv ut source och page från metadata
-    System.out.println("Source: " + metaObject.get("source").getAsString());
-    System.out.println("Page: " + metaObject.get("page").getAsString());
+    
         
 
         return document;

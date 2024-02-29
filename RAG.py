@@ -13,10 +13,13 @@ from subprocess import STDOUT,PIPE
 from sys import stdin
 import subprocess
 from docingesterTemp import load_document_batch
-
+import json
+from langchain.docstore.document import Document
 
 
 llm = Ollama(model="mistral")
+
+
 
 
 #document = document_ingestion.load_document("ark.pdf")
@@ -28,8 +31,7 @@ llm = Ollama(model="mistral")
 
 print("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––")
 
-documents = load_document_batch(["pdf/test.pdf"])
-
+load_document_batch(["pdf/ark.pdf"])
 
 
 # cocument splitting and cleaning (running java code)
@@ -40,6 +42,21 @@ def run_maven():
     process.wait()
      
 run_maven()
+
+json_file_path = "documents.json"
+print(json_file_path)
+# Load and parse the JSON data from the file
+with open(json_file_path, 'r') as json_file:
+    documents_data = json.load(json_file)
+
+# Create a list of Document objects
+documents = [Document(page_content=doc.get('text'), metadata=doc.get('metadata')) for doc in documents_data]
+           
+# remove json
+os.remove(json_file_path)
+
+# lägg till page_content och metadata från json
+
 
 
 '''
@@ -60,13 +77,13 @@ vector_dir = "chromadb/VectorStore"
 import time
 start = time.time()
 # initialize the vector store/db
-'''
+
 db = Chroma.from_documents(
-        docs,
+        documents,
         embedding_function,
         persist_directory=vector_dir, # save in chromadb folder
     )
-'''
+
 
 
 
@@ -76,7 +93,7 @@ db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function)
 
 
 
-retriever = db.as_retriever(search_kwargs={"k": 3}) # k=3 => 3 sources
+retriever = db.as_retriever(search_kwargs={"k": 5}) # k=3 => 3 sources
 
 prompt = prompt()
 qa = RetrievalQA.from_chain_type(
@@ -113,6 +130,6 @@ for source in sources:
     print("-----------------------------------------------------------------------------------------------------------------------")
     print(source)
     print("-----------------------------------------------------------------------------------------------------------------------")
-print("-----------------------------------------------------------------------------------------------------------------------")
+
 
 # stop the timer
