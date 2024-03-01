@@ -77,8 +77,8 @@ document_ingestion.clean_documents(docs)
 vector_dir = "chromadb/VectorStore"
 
 import time
-start = time.time()
 # initialize the vector store/db
+embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
 '''
 db = Chroma.from_documents(
         documents,
@@ -91,15 +91,17 @@ db = Chroma.from_documents(
 
 
 
-embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
 db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
 
 
 
 
-retriever = db.as_retriever(search_kwargs={"k": 5}) # k=3 => 3 sources
+retriever = db.as_retriever(search_kwargs={"k": 7}) # k=3 => 3 sources
+db = 1
+embedding_function = 1
 llm = Ollama(model="mistral")
 prompt = prompt()
+start = time.time()
 qa = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff", 
@@ -108,7 +110,6 @@ qa = RetrievalQA.from_chain_type(
     chain_type_kwargs={"prompt": prompt}
 )
 end = time.time()
-print("Time elapsed: ", end - start)
 
 
 #query_en = "What kind of technologies are reshaping education systems? "
@@ -123,6 +124,7 @@ result = qa.invoke(query_en)
 
 answer = result["result"]
 sources = result["source_documents"]
+print("Time elapsed: ", end - start)
 
 
 print("-----------------------------------------------------------------------------------------------------------------------")

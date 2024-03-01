@@ -22,7 +22,7 @@ public class DocumentIngester {
         
 
 
-        List<Document> documents = loadDocumentsFromPythonScript();
+        List<Document> documents = loadDocumentsFromJsonWithCleanup();
         
         List<TextSegment> segments = splitAllDocuments(documents);
         cleanSegments(segments);
@@ -94,31 +94,18 @@ public class DocumentIngester {
         segments.addAll(cleanedSegments);
     }
 
-    private static List<Document> loadDocumentsFromPythonScript() throws InterruptedException {
-        
-        try {
-
-            List<Document> documents = loadDocumentsFromJsonWithCleanup("../documents.json");
-            System.out.println("Shit fuck");
-            
-
-            return documents;
-
-            // Nu kan du använda 'documents'-listan som innehåller dina deserialiserade
-            // Document-objekt
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+    
 
     // [ Document { text = "ings of SID" metadata = {source=pdf/test.pdf, page=4} },
     // Document { text = "This is a test" metadata = {source=pdf/test.pdf, page=5}
     // }]
 
-    public static List<Document> loadDocumentsFromJsonWithCleanup(String filePath) throws IOException {
+    public static List<Document> loadDocumentsFromJsonWithCleanup() throws IOException {
         // Läs innehållet från filen till en sträng
-        // print
+        // file path
+
+        String filePath = "../documents.json";
+        
         String jsonInput = new String(Files.readAllBytes(Paths.get(filePath)));
         List<Document> documents = null;
         // Använd Gson för att deserialisera JSON-strängen till Document-objekt
@@ -135,8 +122,6 @@ public class DocumentIngester {
             e.printStackTrace();
         }
         
-        
-
         // Ta bort JSON-filen efter deserialisering
         Files.delete(Paths.get(filePath));
         // Returnera listan av deserialiserade dokument
