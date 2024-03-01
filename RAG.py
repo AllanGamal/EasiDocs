@@ -72,7 +72,6 @@ document_ingestion.clean_documents(docs)
 #docs = document_ingestion.split_document(document)
 #page_contents = document_ingestion.get_page_contents(docs)
 
-embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
 
 # save in chromadb folder
 vector_dir = "chromadb/VectorStore"
@@ -92,6 +91,7 @@ db = Chroma.from_documents(
 
 
 
+embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
 db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
 
 
