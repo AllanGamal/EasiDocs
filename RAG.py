@@ -17,7 +17,7 @@ import json
 from langchain.docstore.document import Document
 
 
-llm = Ollama(model="mistral")
+
 
 
 
@@ -30,8 +30,8 @@ llm = Ollama(model="mistral")
 # define the documents
 
 print("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––")
-
-load_document_batch(["pdf/ark.pdf"])
+'''
+load_document_batch(["pdf/ark.pdf", "pdf/test.pdf", "pdf/22.pdf", "pdf/33.pdf",  "pdf/64.pdf","pdf/46.pdf", "pdf/180.pdf"])
 
 
 # cocument splitting and cleaning (running java code)
@@ -43,20 +43,23 @@ def run_maven():
      
 run_maven()
 
-json_file_path = "documents.json"
+json_file_path = "documentsy.json"
 print(json_file_path)
 # Load and parse the JSON data from the file
 with open(json_file_path, 'r') as json_file:
     documents_data = json.load(json_file)
 
+
+print("Going through the documents")
 # Create a list of Document objects
 documents = [Document(page_content=doc.get('text'), metadata=doc.get('metadata')) for doc in documents_data]
            
 # remove json
 os.remove(json_file_path)
-
+print("Removed json file")
 # lägg till page_content och metadata från json
 
+'''
 
 
 '''
@@ -77,12 +80,13 @@ vector_dir = "chromadb/VectorStore"
 import time
 start = time.time()
 # initialize the vector store/db
-
+'''
 db = Chroma.from_documents(
         documents,
         embedding_function,
         persist_directory=vector_dir, # save in chromadb folder
     )
+'''
 
 
 
@@ -94,7 +98,7 @@ db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function)
 
 
 retriever = db.as_retriever(search_kwargs={"k": 5}) # k=3 => 3 sources
-
+llm = Ollama(model="mistral")
 prompt = prompt()
 qa = RetrievalQA.from_chain_type(
     llm=llm,

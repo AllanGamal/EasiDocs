@@ -19,10 +19,12 @@ import java.lang.reflect.Type;
 public class DocumentIngester {
 
     public List<TextSegment> loadSplitAndCleanDocuments() throws IOException, InterruptedException {
+        
+
 
         List<Document> documents = loadDocumentsFromPythonScript();
+        
         List<TextSegment> segments = splitAllDocuments(documents);
-
         cleanSegments(segments);
         // Start JSON construction here, after cleaning
         Gson gson = new Gson();
@@ -46,10 +48,12 @@ public class DocumentIngester {
         }
 
         json += "]";
+        System.out.println("test -----------------");
 
         // Write JSON to file
-        Path path = Paths.get("../documents.json");
+        Path path = Paths.get("../documentsy.json");
         Files.write(path, json.getBytes(StandardCharsets.UTF_8));
+        // wait for the file to be written
 
         return segments;
     }
@@ -65,10 +69,15 @@ public class DocumentIngester {
 
     private static List<TextSegment> splitAllDocuments(List<Document> documents) {
         List<TextSegment> segments = new ArrayList<>();
+        
         for (Document document : documents) {
+            if (document == null) {
+                continue;
+            }
             List<TextSegment> documentSegments = splitDocument(document);
             segments.addAll(documentSegments);
         }
+        
         return segments;
     }
 
@@ -86,11 +95,11 @@ public class DocumentIngester {
     }
 
     private static List<Document> loadDocumentsFromPythonScript() throws InterruptedException {
-        System.out.println("Loading documents from Python script...");
+        
         try {
 
             List<Document> documents = loadDocumentsFromJsonWithCleanup("../documents.json");
-
+            System.out.println("Shit fuck");
             
 
             return documents;
@@ -109,21 +118,27 @@ public class DocumentIngester {
 
     public static List<Document> loadDocumentsFromJsonWithCleanup(String filePath) throws IOException {
         // Läs innehållet från filen till en sträng
+        // print
         String jsonInput = new String(Files.readAllBytes(Paths.get(filePath)));
-
+        List<Document> documents = null;
         // Använd Gson för att deserialisera JSON-strängen till Document-objekt
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Document.class, new DocumentDeserializer()) // Antag att du har en anpassad
-                                                                                 // deserialiserare
-                .create();
-
+        .registerTypeAdapter(Document.class, new DocumentDeserializer()).create();
+        
         Type listType = new TypeToken<List<Document>>() {
         }.getType();
-        List<Document> documents = gson.fromJson(jsonInput, listType);
+        System.out.println(listType);
+        
+        try {
+            documents = gson.fromJson(jsonInput, listType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        
 
         // Ta bort JSON-filen efter deserialisering
         Files.delete(Paths.get(filePath));
-
         // Returnera listan av deserialiserade dokument
         return documents;
     }

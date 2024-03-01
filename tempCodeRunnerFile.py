@@ -1,1 +1,1 @@
-print(documents)
+.
