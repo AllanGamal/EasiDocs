@@ -30,8 +30,9 @@ from langchain.docstore.document import Document
 # define the documents
 
 print("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––")
-'''
 load_document_batch(["pdf/ark.pdf", "pdf/test.pdf", "pdf/22.pdf", "pdf/33.pdf",  "pdf/64.pdf","pdf/46.pdf", "pdf/180.pdf"])
+'''
+load_document_batch(["pdf/ark.pdf", "pdf/test.pdf", "pdf/22.pdf", "pdf/33.pdf",  "pdf/64.pdf"])
 
 
 # cocument splitting and cleaning (running java code)
@@ -58,8 +59,8 @@ documents = [Document(page_content=doc.get('text'), metadata=doc.get('metadata')
 os.remove(json_file_path)
 print("Removed json file")
 # lägg till page_content och metadata från json
-
 '''
+
 
 
 '''
@@ -72,14 +73,13 @@ document_ingestion.clean_documents(docs)
 #docs = document_ingestion.split_document(document)
 #page_contents = document_ingestion.get_page_contents(docs)
 
-embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
 
 # save in chromadb folder
 vector_dir = "chromadb/VectorStore"
 
 import time
-start = time.time()
 # initialize the vector store/db
+embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
 '''
 db = Chroma.from_documents(
         documents,
@@ -88,18 +88,14 @@ db = Chroma.from_documents(
     )
 '''
 
-
-
-
-
 db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
 
-
-
-
-retriever = db.as_retriever(search_kwargs={"k": 5}) # k=3 => 3 sources
+retriever = db.as_retriever(search_kwargs={"k": 3}) # k=3 => 3 sources
+db = 1
+embedding_function = 1
 llm = Ollama(model="mistral")
 prompt = prompt()
+start = time.time()
 qa = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff", 
@@ -108,7 +104,6 @@ qa = RetrievalQA.from_chain_type(
     chain_type_kwargs={"prompt": prompt}
 )
 end = time.time()
-print("Time elapsed: ", end - start)
 
 
 #query_en = "What kind of technologies are reshaping education systems? "
@@ -123,6 +118,7 @@ result = qa.invoke(query_en)
 
 answer = result["result"]
 sources = result["source_documents"]
+print("Time elapsed: ", end - start)
 
 
 print("-----------------------------------------------------------------------------------------------------------------------")
