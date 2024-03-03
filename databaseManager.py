@@ -15,4 +15,4 @@ embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilin
 vector_dir = "chromadb/VectorStore"
 db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
 
-deleteDocumentsBySourceFromDb(db, "pdf/ark.pdf")
+# deleteDocumentsBySourceFromDb(db, "pdf/ark.pdf")
