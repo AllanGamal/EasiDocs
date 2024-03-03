@@ -10,14 +10,6 @@ from langchain.chains import RetrievalQA
 from prompt_template import prompt as prompt
 import os.path
 from subprocess import STDOUT,PIPE
-from sys import stdin
-import subprocess
-from docingesterTemp import load_document_batch
-import json
-from langchain.docstore.document import Document
-
-
-
 
 
 
