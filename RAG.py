@@ -30,8 +30,8 @@ from langchain.docstore.document import Document
 # define the documents
 
 print("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––")
-load_document_batch(["pdf/ark.pdf", "pdf/test.pdf", "pdf/22.pdf", "pdf/33.pdf",  "pdf/64.pdf","pdf/46.pdf", "pdf/180.pdf"])
 '''
+load_document_batch(["pdf/ark.pdf", "pdf/test.pdf", "pdf/22.pdf", "pdf/33.pdf",  "pdf/64.pdf","pdf/46.pdf", "pdf/180.pdf"])
 load_document_batch(["pdf/ark.pdf", "pdf/test.pdf", "pdf/22.pdf", "pdf/33.pdf",  "pdf/64.pdf"])
 
 
@@ -63,17 +63,6 @@ print("Removed json file")
 
 
 
-'''
-documents = document_ingestion.load_document_batch(["pdf/22.pdf", "pdf/33.pdf", "pdf/46.pdf", "pdf/64.pdf", "pdf/180.pdf", "pdf/ark.pdf", "pdf/test.pdf"]) 
-docs = document_ingestion.split_document_batch(documents)
-document_ingestion.clean_documents(docs)
-'''
-
-
-#docs = document_ingestion.split_document(document)
-#page_contents = document_ingestion.get_page_contents(docs)
-
-
 # save in chromadb folder
 vector_dir = "chromadb/VectorStore"
 
@@ -87,6 +76,7 @@ db = Chroma.from_documents(
         persist_directory=vector_dir, # save in chromadb folder
     )
 '''
+
 
 db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
 
