@@ -10,6 +10,11 @@ from langchain.chains import RetrievalQA
 from prompt_template import prompt as prompt
 import os.path
 from subprocess import STDOUT,PIPE
+from sys import stdin
+import subprocess
+from docingesterTemp import load_document_batch
+import json
+from langchain.docstore.document import Document
 
 
 
@@ -51,10 +56,10 @@ documents = [Document(page_content=doc.get('text'), metadata=doc.get('metadata')
 os.remove(json_file_path)
 print("Removed json file")
 # lägg till page_content och metadata från json
+
+
+
 '''
-
-
-
 # save in chromadb folder
 vector_dir = "chromadb/VectorStore"
 
@@ -85,25 +90,27 @@ qa = RetrievalQA.from_chain_type(
     return_source_documents=True,
     chain_type_kwargs={"prompt": prompt}
 )
-end = time.time()
 
 
 #query_en = "What kind of technologies are reshaping education systems? "
+'''
 query_en = "Why are EV manufacturers retracting from the EV market"
 query_sv = "Vilka teknologier omformar utbildningssystemen?"
+'''
 query2_en = "Have AR or VR revealed any potential in the education sector?"
 print("QUESTION")
-print(query_en)
+print(query2_en)
 
 
-result = qa.invoke(query_en)
+result = qa.invoke(query2_en)
 
 answer = result["result"]
 sources = result["source_documents"]
-print("Time elapsed: ", end - start)
 
 
+end = time.time()
 print("-----------------------------------------------------------------------------------------------------------------------")
+print("Time elapsed: ", end - start)
 print("ANSWER")
 print(answer)
 print(len(sources))
