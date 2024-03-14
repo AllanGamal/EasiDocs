@@ -1,0 +1,6 @@
+/* define your color variables for darkmode and light mode */
+:root {
+  --primary-background-color: #1e1e1e;
+  --secondary-background-color: #2e2e2e;
+  --primary-text-color: rgb(194, 194, 194);
+}/*# sourceMappingURL=colorVariables.css.map */

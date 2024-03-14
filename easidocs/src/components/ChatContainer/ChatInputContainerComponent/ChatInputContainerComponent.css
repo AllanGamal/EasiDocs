@@ -1,0 +1,55 @@
+:root {
+  --primary-background-color: #1e1e1e;
+  --secondary-background-color: #2e2e2e;
+  --primary-text-color: rgb(194, 194, 194);
+  --primary-background-color-hover: #333333;
+  --secondary-background-color-hover: #444444;
+  --primary-text-color-hover: rgb(221, 221, 221);
+}
+
+.chat-input-container {
+  background-color: var(--secondary-background-color);
+  width: 100%;
+  padding: 20px;
+}
+.chat-input-container .chat-input-element-container {
+  background-color: var(--secondary-background-color);
+  max-width: 750px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  margin: auto;
+}
+.chat-input-container .chat-input-element-container button {
+  background-color: var(--primary-background-color);
+  color: var(--primary-text-color);
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.chat-input-container .chat-input-element-container button:hover {
+  background-color: var(--primary-background-color-hover);
+}
+.chat-input-container .chat-input-element-container button:focus {
+  outline: none;
+}
+.chat-input-container .chat-input-element-container button:active {
+  background-color: var(--primary-background-color-hover);
+}
+.chat-input-container .chat-input-element-container .chat-input {
+  flex-grow: 1;
+  background-color: var(--secondary-background-color);
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid var(--secondary-background-color-hover);
+  margin-right: 10px;
+  color: var(--primary-text-color);
+}
+.chat-input-container .chat-input-element-container .chat-input:focus {
+  outline: none;
+}/*# sourceMappingURL=ChatInputContainerComponent.css.map */
