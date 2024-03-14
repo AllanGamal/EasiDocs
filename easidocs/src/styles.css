@@ -61,13 +61,7 @@
   text-align: center;
 }
 
-.list-group.file-list {
-  background-color: blue;
-  list-style: none;
-  overflow-y: auto;
-  
 
-}
 
 .chat-container {
   background-color: pink;
@@ -80,11 +74,16 @@
   padding: 20px;
 }
 
-.chat-history-container.list-group {
-  background-color: purple;
+.chat-history-container{
   width: 100%;
   height: 100%;
-  overflow-y: auto;
+  overflow-y: scroll;
+
+}
+
+.chat-history-list.list-group {
+  background-color: purple;
+  width: 100%;
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -93,14 +92,22 @@
   
 }
 
+
 .chat-input-container {
   background-color: orange;
   width: 100%;
+  padding: 20px;
+}
+
+.chat-input-element-container {
+  background-color: rgb(229, 70, 70);
+  max-width: 750px;
+  width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  padding: 20px;
+  margin: auto;
 }
 
 .chat-input {
