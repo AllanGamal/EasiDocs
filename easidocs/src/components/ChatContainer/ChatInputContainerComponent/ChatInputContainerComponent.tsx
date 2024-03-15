@@ -5,15 +5,19 @@ interface Props {
   onSendMessage: (message: string) => void;
 }
 
+
+
 function ChatInputContainerComponent({ onSendMessage }: Props) {
   const [message, setMessage] = useState('');
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
   };
-
+  
+  
   const handleSendClick = () => {
     onSendMessage(message);
+    console.log(message);  // Lägg till denna för att se uppdateringar
     setMessage('');
   };
 

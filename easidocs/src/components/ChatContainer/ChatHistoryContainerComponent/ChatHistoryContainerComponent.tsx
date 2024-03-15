@@ -5,8 +5,13 @@ import humanLogo from "../../../assets/human-logo.png";
 import "./ChatHistoryContainerComponent.css";
 import { useEffect, useRef } from "react";
 
+export interface Message {
+    text: string;
+    type: 'user' | 'bot';
+  }
+
 interface Props {
-  chatHistory: string[];
+  chatHistory: Message[];
 }
 function ChatHistoryContainerComponent({ chatHistory }: Props) {
     const messagesEndRef = useRef<null | HTMLLIElement>(null);
@@ -20,24 +25,24 @@ function ChatHistoryContainerComponent({ chatHistory }: Props) {
         scrollToBottom();
       }, [chatHistory]);
 
-    return (
+      return (
         <div className="chat-history-container">
-            <ul className="chat-history-list list-group">
+          <ul className="chat-history-list list-group">
             {chatHistory && chatHistory.map((message, index) => (
-                    <li key={index} className="chat-user-container user list-group-item">
-                        <div className="chat-user-logo">
-                            <img src={humanLogo} className="App-logo" alt="logo" />
-                        </div>
-                        <div className="chat-user">
-                            <p className="chat-history-textfield">{message}</p>
-                        </div>
-                    </li>
-                ))}
-                <li ref={messagesEndRef} />
-            </ul>
+              <li key={index} className={`chat-user-container ${message.type} list-group-item`}>
+                <div className="chat-user-logo">
+                  <img src={message.type === 'user' ? humanLogo : rTwoodTwooLogo} className="App-logo" alt="logo" />
+                </div>
+                <div className="chat-user">
+                  <p className="chat-history-textfield">{message.text}</p>
+                </div>
+              </li>
+            ))}
+            {/* A reference element to enable automatic scrolling */}
+            <li ref={messagesEndRef} />
+          </ul>
         </div>
-    );
-  }
-  
-
-export default ChatHistoryContainerComponent;
+      );
+    }
+    
+    export default ChatHistoryContainerComponent;
