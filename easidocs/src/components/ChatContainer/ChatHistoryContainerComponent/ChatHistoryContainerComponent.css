@@ -37,8 +37,17 @@
 .chat-history-container .chat-history-list .chat-user-container.user {
   background-color: var(--secondary-background-color);
 }
+.chat-history-container .chat-history-list .chat-user-container.user .App-logo {
+  height: 50px;
+}
 .chat-history-container .chat-history-list .chat-user-container.bot {
-  background-color: var(--primary-background-color);
+  background-color: rgba(30, 30, 30, 0.4862745098);
+}
+.chat-history-container .chat-history-list .chat-user-container.bot .App-logo {
+  width: 40px;
+}
+.chat-history-container .chat-history-list .chat-user-container .chat-user-logo {
+  width: 60px;
 }
 .chat-history-container .chat-history-list .chat-user-container .chat-user {
   color: var(--secondary-background-color);

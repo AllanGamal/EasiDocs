@@ -30,10 +30,23 @@
 
             &.user {
                 background-color: var(--secondary-background-color);
+
+                .App-logo {
+                    height: 50px;
+                }
             }
 
             &.bot {
-                background-color: var(--primary-background-color);
+                background-color: #1e1e1e7c;
+
+                .App-logo {
+                    width: 40px;
+                }
+            }
+
+            .chat-user-logo {
+                width: 60px;
+                
             }
             
 
