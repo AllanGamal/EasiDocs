@@ -1,8 +1,12 @@
 import './FileListComponent.css';
+import React from 'react';
 
-export function FileListComponent() {
-    const files = ['File 1', 'File 2', 'File 3', 'File 4', 'File 5', 'File 6', 'File 7', 'File 8']; // Dynamic data could be passed here
-  
+interface FileListComponentProps {
+  files: string[]; // Assuming files is an array of strings
+}
+
+
+export function FileListComponent({ files }: FileListComponentProps) {
     return (
       <ul className="list-group file-list">
         {files.map((file, index) => (
@@ -13,7 +17,6 @@ export function FileListComponent() {
         ))}
       </ul>
     );
-  }
+}
 
 export default FileListComponent;
-  

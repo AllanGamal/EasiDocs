@@ -12,6 +12,18 @@
   height: 100%;
   overflow-y: scroll;
 }
+.chat-history-container::-webkit-scrollbar {
+  width: 5px;
+}
+.chat-history-container::-webkit-scrollbar-track {
+  background: var(--secondary-background-color);
+}
+.chat-history-container::-webkit-scrollbar-thumb {
+  background: var(--primary-background-color);
+}
+.chat-history-container::-webkit-scrollbar-thumb:hover {
+  background: #111010;
+}
 .chat-history-container .chat-history-list {
   background-color: var(--secondary-background-color);
   width: 100%;
