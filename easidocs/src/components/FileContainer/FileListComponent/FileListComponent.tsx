@@ -2,7 +2,8 @@ import './FileListComponent.css';
 import React from 'react';
 
 interface FileListComponentProps {
-  files: string[]; // Assuming files is an array of strings
+    files: string[];
+    
 }
 
 
