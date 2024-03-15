@@ -7,6 +7,10 @@ function FileContainerComponent() {
   const [dragging, setDragging] = useState(false);
   const [fileNames, setFileNames] = useState<string[]>([]);
 
+  const onRemoveFile = (file: string) => {
+    setFileNames(existingFileNames => existingFileNames.filter(name => name !== file));
+  }
+
   const dragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setDragging(true);
@@ -43,7 +47,7 @@ function FileContainerComponent() {
       className="file-container"
     >
       <h1 id="file-title">easiDocs</h1>
-      <FileListComponent files={fileNames} />
+      <FileListComponent files={fileNames} onRemoveFile={onRemoveFile} />
         <div
           className={`dropZone ${dragging ? 'dragging' : ''}`}
           onDragOver={(e) => dragOver(e)}

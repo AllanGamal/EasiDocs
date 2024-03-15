@@ -35,14 +35,10 @@
 
     .dropZone {
       position: fixed;
-      
       bottom: 0;
       left: 0;
-
-      background-color: var(--primary-background-color);
-      /* opacity: 0.5; */
-      opacity: 0.5;
-      border: 2px dashed var(--secondary-background-color);
+      background-color: rgba(0, 128, 0, 0.099);
+      border: 2px dashed rgba(255, 255, 255, 0.086);
       border-radius: 5px;
       color: var(--primary-text-color);
       display: flex;

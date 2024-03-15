@@ -3,11 +3,23 @@
 import rTwoodTwooLogo from "../../../assets/r2d2-logo.png";
 import humanLogo from "../../../assets/human-logo.png";
 import "./ChatHistoryContainerComponent.css";
+import { useEffect, useRef } from "react";
 
 interface Props {
   chatHistory: string[];
 }
 function ChatHistoryContainerComponent({ chatHistory }: Props) {
+    const messagesEndRef = useRef<null | HTMLLIElement>(null);
+
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+
+    useEffect(() => {
+        scrollToBottom();
+      }, [chatHistory]);
+
     return (
         <div className="chat-history-container">
             <ul className="chat-history-list list-group">
@@ -21,6 +33,7 @@ function ChatHistoryContainerComponent({ chatHistory }: Props) {
                         </div>
                     </li>
                 ))}
+                <li ref={messagesEndRef} />
             </ul>
         </div>
     );

@@ -72,14 +72,30 @@
                 
                 color: var(--secondary-background-color);
                 width: 100%;
+                max-width: inherit;
                 padding: 10px;
                 border: none;
                 margin-right: 10px;
-                display: flex;
+                overflow-x: auto;
+
+
+                &::-webkit-scrollbar {
+                    height: 5px;
+                }
+
+                &::-webkit-scrollbar-track {
+                    background: var(--secondary-background-color); 
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    background: var(--primary-background-color); 
+                }
+                
                 
                 .chat-history-textfield {
                     color: var(--primary-text-color);
-                    
+                    text-align: left;
+                
                 }
             }
             
