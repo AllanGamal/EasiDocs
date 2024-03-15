@@ -1,14 +1,21 @@
 import './ChatContainerComponent.css';
 import ChatHistoryContainerComponent from '../ChatHistoryContainerComponent/ChatHistoryContainerComponent';
 import ChatInputContainerComponent from '../ChatInputContainerComponent/ChatInputContainerComponent';
+import { useState } from 'react';
 
 function ChatContainerComponent() {
-    return (
-      <div className="chat-container">
-        <ChatHistoryContainerComponent />
-        <ChatInputContainerComponent />
-      </div>
-    );
-  }
+  const [chatHistory, setChatHistory] = useState<string[]>([]);
+
+  const addChatToHistory = (message: string) => {
+    setChatHistory([...chatHistory, message]);
+  };
+
+  return (
+    <div className="chat-container">
+      <ChatHistoryContainerComponent chatHistory={chatHistory} />
+      <ChatInputContainerComponent onSendMessage={addChatToHistory} />
+    </div>
+  );
+}
 
 export default ChatContainerComponent;
