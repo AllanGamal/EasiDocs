@@ -1,0 +1,21 @@
+
+.file-container {
+    background-color: var(--primary-background-color);
+    max-width: 300px;
+    min-width: 200px;
+    width: 25%;
+    overflow-y: auto;
+
+    #file-title {
+        background-color: inherit;
+        font-size: 1.5em;
+        font-weight: 600;
+        margin: auto;
+        padding: 20px;
+        text-align: center;
+        color: var(--primary-text-color);
+      }
+}
+
+
+  

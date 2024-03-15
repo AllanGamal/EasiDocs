@@ -1,0 +1,62 @@
+:root {
+  --primary-background-color: #1e1e1e;
+  --secondary-background-color: #2e2e2e;
+  --primary-text-color: rgb(194, 194, 194);
+  --primary-background-color-hover: #333333;
+  --secondary-background-color-hover: #444444;
+  --primary-text-color-hover: rgb(221, 221, 221);
+}
+
+.chat-history-container {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+}
+.chat-history-container .chat-history-list {
+  background-color: var(--secondary-background-color);
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+.chat-history-container .chat-history-list .chat-user-container {
+  background-color: var(--secondary-background-color);
+  width: 100%;
+  max-width: 750px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 20px;
+  border: none;
+  border-top: 1px solid var(--secondary-background-color-hover);
+  border-bottom: 1px solid var(--secondary-background-color-hover);
+}
+.chat-history-container .chat-history-list .chat-user-container.user {
+  background-color: var(--secondary-background-color);
+}
+.chat-history-container .chat-history-list .chat-user-container.user .App-logo {
+  height: 50px;
+}
+.chat-history-container .chat-history-list .chat-user-container.bot {
+  background-color: rgba(30, 30, 30, 0.4862745098);
+}
+.chat-history-container .chat-history-list .chat-user-container.bot .App-logo {
+  width: 40px;
+}
+.chat-history-container .chat-history-list .chat-user-container .chat-user-logo {
+  width: 60px;
+}
+.chat-history-container .chat-history-list .chat-user-container .chat-user {
+  color: var(--secondary-background-color);
+  width: 100%;
+  padding: 10px;
+  border: none;
+  margin-right: 10px;
+  display: flex;
+}
+.chat-history-container .chat-history-list .chat-user-container .chat-user .chat-history-textfield {
+  color: var(--primary-text-color);
+}/*# sourceMappingURL=ChatHistoryContainerComponent.css.map */

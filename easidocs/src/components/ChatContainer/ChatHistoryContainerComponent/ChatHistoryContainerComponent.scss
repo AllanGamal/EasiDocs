@@ -1,0 +1,82 @@
+@import '../../ComponentsStyle/ComponentsVariables.scss';
+
+
+.chat-history-container {
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+
+    .chat-history-list {
+        background-color: var(--secondary-background-color);
+        width: 100%;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+
+        .chat-user-container {
+            background-color: var(--secondary-background-color);
+            width: 100%;
+            max-width: 750px;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 20px;
+            border: none;
+            border-top: 1px solid var(--secondary-background-color-hover);
+            border-bottom: 1px solid var(--secondary-background-color-hover);
+
+            &.user {
+                background-color: var(--secondary-background-color);
+
+                .App-logo {
+                    height: 50px;
+                }
+            }
+
+            &.bot {
+                background-color: #1e1e1e7c;
+
+                .App-logo {
+                    width: 40px;
+                }
+            }
+
+            .chat-user-logo {
+                width: 60px;
+                
+            }
+            
+
+            .chat-user {
+                
+                color: var(--secondary-background-color);
+                width: 100%;
+                padding: 10px;
+                border: none;
+                margin-right: 10px;
+                display: flex;
+                
+                .chat-history-textfield {
+                    color: var(--primary-text-color);
+                    
+                }
+            }
+            
+            
+        }
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
