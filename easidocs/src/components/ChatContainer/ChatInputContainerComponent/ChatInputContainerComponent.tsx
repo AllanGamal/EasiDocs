@@ -18,21 +18,29 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
   
   const handleSendClick = () => {
     const apiUrl = 'http://localhost:8000/message';
-  
+    
+    if (message !== '') {
     axios.post(apiUrl, { message })
       .then(response => {
         console.log("response");
   
         if (response.status === 200) {
           console.log('Message sent');
+          onSendMessage(message);
+          setMessage('');
+        } else {
+          onSendMessage("Failed to send message: " + response.status + " - " + response.statusText);
+          setMessage('');
         }
       })
+      
       .catch(error => {
+        onSendMessage("Failed to send message, could not connect to server.");
+        setMessage('');
         console.error(error);
       });
-  
-    onSendMessage(message);
-    setMessage('');
+      
+    }
   };
 
   return (
