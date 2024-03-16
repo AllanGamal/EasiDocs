@@ -17,7 +17,8 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
   
   
   const handleSendClick = () => {
-    const apiUrl = 'http://localhost:8000/message';
+    const apiUrl = 'http://localhost:8001/message';
+    
     
     if (message !== '') {
     axios.post(apiUrl, { message })

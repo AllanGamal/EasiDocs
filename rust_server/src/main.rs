@@ -30,12 +30,12 @@ async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
 async fn call_python_function() -> PyResult<()> {
     Python::with_gil(|py| {
         let sys = PyModule::import(py, "sys").unwrap();
-        sys.getattr("path").unwrap().call_method1("append", ("/Users/allangamal/Documents/GitHub/EasiDocs/backend/loltest",)).unwrap();
+        sys.getattr("path").unwrap().call_method1("append", ("/Users/allangamal/Documents/GitHub/EasiDocs/backend",)).unwrap();
         
-        let python_script = PyModule::import(py, "testar")?;
+        let python_script = PyModule::import(py, "RAG")?;
         
         
-        let result: String = python_script.call_method1("printText", ("message",))?.extract()?;
+        let result: String = python_script.call_method1("runItAll", ("Have AR or VR revealed any potential in the education sector?",))?.extract()?;
 
         println!("Python function returned: {}", result);
         Ok(())
@@ -63,7 +63,7 @@ async fn main() -> std::io::Result<()> {
                     .route(web::post().to(handle_file_paths)),
             )
     })
-    .bind("127.0.0.1:8000")?
+    .bind("127.0.0.1:8001")?
     .run()
     .await
 }
