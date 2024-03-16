@@ -22,7 +22,7 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
     if (message !== '') {
     axios.post(apiUrl, { message })
       .then(response => {
-        console.log("response");
+        
   
         if (response.status === 200) {
           console.log('Message sent');

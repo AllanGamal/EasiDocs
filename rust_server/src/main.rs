@@ -1,6 +1,8 @@
 use actix_cors::Cors;
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use serde::Deserialize;
+use pyo3::prelude::*;
+
 
 #[derive(Deserialize)]
 struct Message {
@@ -13,6 +15,10 @@ struct FilePaths {
 
 async fn handle_message(message: web::Json<Message>) -> impl Responder {
     println!("Received message: {}", message.message);
+    // strng k
+    let _ = call_python_function().await;
+    
+    
     HttpResponse::Ok().body("Message received")
 }
 
@@ -20,6 +26,22 @@ async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
     println!("Received file paths: {:?}", paths.file_paths);
     HttpResponse::Ok().body("File paths received")
 }
+
+async fn call_python_function() -> PyResult<()> {
+    Python::with_gil(|py| {
+        let sys = PyModule::import(py, "sys").unwrap();
+        sys.getattr("path").unwrap().call_method1("append", ("/Users/allangamal/Documents/GitHub/EasiDocs/backend/loltest",)).unwrap();
+        
+        let python_script = PyModule::import(py, "testar")?;
+        
+        
+        let result: String = python_script.call_method1("printText", ("message",))?.extract()?;
+
+        println!("Python function returned: {}", result);
+        Ok(())
+    })
+}
+
 
 
 
