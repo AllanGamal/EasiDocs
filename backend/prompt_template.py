@@ -1,4 +1,3 @@
-import document_ingestion as document_ingestion
 from langchain.prompts import PromptTemplate
 
 
