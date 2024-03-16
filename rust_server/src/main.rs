@@ -15,11 +15,31 @@ struct FilePaths {
 
 async fn handle_message(message: web::Json<Message>) -> impl Responder {
     println!("Received message: {}", message.message);
-    // strng k
-    let _ = call_python_function().await;
-    
-    
-    HttpResponse::Ok().body("Message received")
+    let query = message.message.clone();
+
+    // Anropa Python-funktionen asynkront och vänta på resultatet
+    match execute_rag_query(query).await {
+        Ok(result) => {
+            println!("Result: {}", result);
+            HttpResponse::Ok().body(result) // Returnera resultatet
+        }
+        Err(e) => {
+            eprintln!("Failed to execute Python function: {:?}", e);
+            HttpResponse::InternalServerError().body(format!("Failed to execute Python function: {:?}", e))
+        }
+    }
+}
+
+async fn execute_rag_query(query: String) -> PyResult<String> {
+    Python::with_gil(|py| {
+        let sys = PyModule::import(py, "sys").unwrap();
+        sys.getattr("path").unwrap().call_method1("append", ("/Users/allangamal/Documents/GitHub/EasiDocs/backend",)).unwrap();
+        
+        let python_script = PyModule::import(py, "RAG")?;
+        let result: String = python_script.call_method1("runItAll", (&query,))?.extract()?;
+        println!("Python function returned: {}", result);
+        Ok(result)
+    })
 }
 
 async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
@@ -27,20 +47,6 @@ async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
     HttpResponse::Ok().body("File paths received")
 }
 
-async fn call_python_function() -> PyResult<()> {
-    Python::with_gil(|py| {
-        let sys = PyModule::import(py, "sys").unwrap();
-        sys.getattr("path").unwrap().call_method1("append", ("/Users/allangamal/Documents/GitHub/EasiDocs/backend",)).unwrap();
-        
-        let python_script = PyModule::import(py, "RAG")?;
-        
-        
-        let result: String = python_script.call_method1("runItAll", ("Have AR or VR revealed any potential in the education sector?",))?.extract()?;
-
-        println!("Python function returned: {}", result);
-        Ok(())
-    })
-}
 
 
 

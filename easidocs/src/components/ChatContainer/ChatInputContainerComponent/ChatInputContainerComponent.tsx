@@ -1,9 +1,12 @@
 import './ChatInputContainerComponent.css';
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Message } from '../ChatHistoryContainerComponent/ChatHistoryContainerComponent';
 
 interface Props {
-  onSendMessage: (message: string) => void;
+  // message and type 
+  onSendMessage: (message: Message) => void;
+  
 }
 
 
@@ -14,6 +17,8 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
   };
+
+  
   
   
   const handleSendClick = () => {
@@ -21,22 +26,26 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
     
     
     if (message !== '') {
-    axios.post(apiUrl, { message })
+      onSendMessage({ text: message, type: 'user' });
+      setMessage('');
+      axios.post(apiUrl, { message })
       .then(response => {
         
-  
+        
         if (response.status === 200) {
           console.log('Message sent');
-          onSendMessage(message);
-          setMessage('');
+          onSendMessage({ text: response.data, type: 'bot' });
+       
+      
+          console.log(response.data);
         } else {
-          onSendMessage("Failed to send message: " + response.status + " - " + response.statusText);
+          onSendMessage({ text: "Failed to send message: " + response.statusText, type: 'bot' });
           setMessage('');
         }
       })
       
       .catch(error => {
-        onSendMessage("Failed to send message, could not connect to server.");
+        onSendMessage({text : "Failed to send message, could not connect to server.", type: 'bot' });
         setMessage('');
         console.error(error);
       });

@@ -36,21 +36,15 @@ def runItAll(query):
 
     import time
     # initialize the vector store/db
-    print("test1")
     embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
-    print("test2")
     db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
-    print("test3")
 
     retriever = db.as_retriever(search_kwargs={"k": 3}) # k=3 => 3 sources
     db = 1
     embedding_function = 1
-    print("test4")
     llm = Ollama(model="mistral")
     
-    print("test5")
     start = time.time()
-    print("test5")
     qa = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type="stuff", 
@@ -59,15 +53,10 @@ def runItAll(query):
         
     )
     query2_en = "Have AR or VR revealed any potential in the education sector?"
-    
-
-
     result = qa.invoke(query)
 
-    print("test6")
     answer = result["result"]
     sources = result["source_documents"]
-    print("test")
     end = time.time()
     print("-----------------------------------------------------------------------------------------------------------------------")
     print("Time elapsed: ", end - start)

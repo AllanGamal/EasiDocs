@@ -6,43 +6,43 @@ import "./ChatHistoryContainerComponent.css";
 import { useEffect, useRef } from "react";
 
 export interface Message {
-    text: string;
-    type: 'user' | 'bot';
-  }
+  text: string;
+  type: 'user' | 'bot';
+}
 
 interface Props {
   chatHistory: Message[];
 }
 function ChatHistoryContainerComponent({ chatHistory }: Props) {
-    const messagesEndRef = useRef<null | HTMLLIElement>(null);
+  const messagesEndRef = useRef<null | HTMLLIElement>(null);
 
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }
 
-    useEffect(() => {
-        scrollToBottom();
-      }, [chatHistory]);
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatHistory]);
 
-      return (
-        <div className="chat-history-container">
-          <ul className="chat-history-list list-group">
-            {chatHistory && chatHistory.map((message, index) => (
-              <li key={index} className={`chat-user-container ${message.type} list-group-item`}>
-                <div className="chat-user-logo">
-                  <img src={message.type === 'user' ? humanLogo : rTwoodTwooLogo} className="App-logo" alt="logo" />
-                </div>
-                <div className="chat-user">
-                  <p className="chat-history-textfield">{message.text}</p>
-                </div>
-              </li>
-            ))}
-            {/* A reference element to enable automatic scrolling */}
-            <li ref={messagesEndRef} />
-          </ul>
-        </div>
-      );
-    }
-    
-    export default ChatHistoryContainerComponent;
+  return (
+    <div className="chat-history-container">
+      <ul className="chat-history-list list-group">
+        {chatHistory && chatHistory.map((message, index) => (
+          <li key={index} className={`chat-user-container ${message.type} list-group-item`}>
+            <div className="chat-user-logo">
+              <img src={message.type === 'user' ? humanLogo : rTwoodTwooLogo} className="App-logo" alt="logo" />
+            </div>
+            <div className="chat-user">
+              <p className="chat-history-textfield">{message.text}</p>
+            </div>
+          </li>
+        ))}
+
+        <li ref={messagesEndRef} />
+      </ul>
+    </div>
+  );
+}
+
+export default ChatHistoryContainerComponent;

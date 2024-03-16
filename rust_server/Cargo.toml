@@ -12,3 +12,4 @@ actix-multipart = "0.4.0"
 futures = "0.3"
 sanitize-filename = "0.3.0"
 pyo3 = { version = "0.20.3", features = ["auto-initialize"] }
+tokio = { version = "1", features = ["full"] }
