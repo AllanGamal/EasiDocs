@@ -7,35 +7,56 @@
   --primary-text-color-hover: rgb(221, 221, 221);
 }
 
-.file-list .file-item {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  background-color: inherit;
-  border: none;
-  border-bottom: 1px solid var(--secondary-background-color);
-  border-top: 1px solid var(--secondary-background-color);
+.file-container {
+  background-color: var(--primary-background-color);
+  max-width: 300px;
+  min-width: 200px;
+  width: 25%;
+  overflow-y: auto;
+  height: calc(100vh - 140px);
 }
-.file-list .file-item label {
-  color: green;
+.file-container::-webkit-scrollbar {
+  width: 5px;
+}
+.file-container::-webkit-scrollbar-track {
+  background: var(--secondary-background-color);
+}
+.file-container::-webkit-scrollbar-thumb {
+  background: var(--primary-background-color);
+}
+.file-container::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-background-color);
+}
+.file-container #file-title {
+  background-color: inherit;
+  font-weight: 600;
+  padding: 20px;
+  text-align: center;
   color: var(--primary-text-color);
 }
-.file-list .file-item .btn-close.remove-file-button {
-  display: none;
-  color: white;
-  border-radius: 15px;
-  cursor: pointer;
-  margin-left: 10px;
+.file-container .dropZone {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 128, 0, 0.099);
+  border: 2px dashed rgba(255, 255, 255, 0.086);
+  border-radius: 5px;
+  color: var(--primary-text-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  margin: 20px;
+  padding: 20px;
+  text-align: center;
+  width: calc(20% - 40px);
+  transition: all 0.3s ease;
 }
-.file-list .file-item:hover {
+.file-container .dropZone:hover {
   background-color: var(--primary-background-color-hover);
+  color: white;
 }
-.file-list .file-item:hover label {
-  color: var(--primary-text-color-hover);
-}
-.file-list .file-item:hover .btn-close.remove-file-button {
-  display: block;
-  padding: 0px;
-  color: var(--primary-text-color-hover);
+.file-container .dropZone.dragging {
+  background-color: var(--secondary-background-color-hover);
 }/*# sourceMappingURL=FileContainerComponent.css.map */

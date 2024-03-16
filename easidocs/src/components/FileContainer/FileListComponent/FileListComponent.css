@@ -1,16 +1,41 @@
-.file-container {
-  background-color: var(--primary-background-color);
-  max-width: 300px;
-  min-width: 200px;
-  width: 25%;
-  overflow-y: auto;
+:root {
+  --primary-background-color: #1e1e1e;
+  --secondary-background-color: #2e2e2e;
+  --primary-text-color: rgb(194, 194, 194);
+  --primary-background-color-hover: #333333;
+  --secondary-background-color-hover: #444444;
+  --primary-text-color-hover: rgb(221, 221, 221);
 }
-.file-container #file-title {
+
+.file-list .file-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   background-color: inherit;
-  font-size: 1.5em;
-  font-weight: 600;
-  margin: auto;
-  padding: 20px;
-  text-align: center;
+  border: none;
+  border-bottom: 1px solid var(--secondary-background-color);
+  border-top: 1px solid var(--secondary-background-color);
+}
+.file-list .file-item label {
+  font-size: 0.9rem;
   color: var(--primary-text-color);
+}
+.file-list .file-item .btn-close.remove-file-button {
+  display: none;
+  color: white;
+  border-radius: 15px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+.file-list .file-item:hover {
+  background-color: var(--primary-background-color-hover);
+}
+.file-list .file-item:hover label {
+  color: var(--primary-text-color-hover);
+}
+.file-list .file-item:hover .btn-close.remove-file-button {
+  display: block;
+  padding: 0px;
+  color: var(--primary-text-color-hover);
 }/*# sourceMappingURL=FileListComponent.css.map */

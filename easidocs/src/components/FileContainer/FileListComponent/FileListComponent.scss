@@ -1,21 +1,46 @@
+@import '../../ComponentsStyle/ComponentsVariables.scss';
 
-.file-container {
-    background-color: var(--primary-background-color);
-    max-width: 300px;
-    min-width: 200px;
-    width: 25%;
-    overflow-y: auto;
+.file-list {
 
-    #file-title {
-        background-color: inherit;
-        font-size: 1.5em;
-        font-weight: 600;
-        margin: auto;
-        padding: 20px;
-        text-align: center;
-        color: var(--primary-text-color);
+  .file-item {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      background-color: inherit;
+      border: none;
+      border-bottom: 1px solid var(--secondary-background-color);
+      border-top: 1px solid var(--secondary-background-color);
+      
+      label {
+          
+          font-size: 0.9rem;
+
+          color: var(--primary-text-color);
       }
+      .btn-close.remove-file-button {
+          display: none;
+          color: white;
+          border-radius: 15px;
+          cursor: pointer;
+          margin-left: 10px;
+      }
+
+      &:hover {
+          background-color: var(--primary-background-color-hover);
+  
+          label {
+              color: var(--primary-text-color-hover);
+              
+              
+          }
+
+          .btn-close.remove-file-button {
+              display: block;
+              padding: 0px;
+              color: var(--primary-text-color-hover);
+          }
+      }
+  }
 }
 
-
-  
