@@ -29,6 +29,7 @@ from langchain.docstore.document import Document
 print("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––")
 '''
 load_document_batch(["pdf/ark.pdf", "pdf/test.pdf", "pdf/22.pdf", "pdf/33.pdf",  "pdf/64.pdf","pdf/46.pdf", "pdf/180.pdf"])
+'''
 load_document_batch(["pdf/ark.pdf", "pdf/test.pdf", "pdf/22.pdf", "pdf/33.pdf",  "pdf/64.pdf"])
 
 
@@ -59,19 +60,18 @@ print("Removed json file")
 
 
 
-'''
 # save in chromadb folder
 vector_dir = "chromadb/VectorStore"
 
 import time
 # initialize the vector store/db
 embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
-'''
 db = Chroma.from_documents(
         documents,
         embedding_function,
         persist_directory=vector_dir, # save in chromadb folder
     )
+'''
 '''
 
 
