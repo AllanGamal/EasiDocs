@@ -1,5 +1,6 @@
 import './ChatInputContainerComponent.css';
 import React, { useState } from 'react';
+import axios from 'axios';
 
 interface Props {
   onSendMessage: (message: string) => void;
@@ -16,9 +17,30 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
   
   
   const handleSendClick = () => {
-    onSendMessage(message);
-    console.log(message);  // Lägg till denna för att se uppdateringar
-    setMessage('');
+    const apiUrl = 'http://localhost:8000/message';
+    
+    if (message !== '') {
+    axios.post(apiUrl, { message })
+      .then(response => {
+        console.log("response");
+  
+        if (response.status === 200) {
+          console.log('Message sent');
+          onSendMessage(message);
+          setMessage('');
+        } else {
+          onSendMessage("Failed to send message: " + response.status + " - " + response.statusText);
+          setMessage('');
+        }
+      })
+      
+      .catch(error => {
+        onSendMessage("Failed to send message, could not connect to server.");
+        setMessage('');
+        console.error(error);
+      });
+      
+    }
   };
 
   return (
