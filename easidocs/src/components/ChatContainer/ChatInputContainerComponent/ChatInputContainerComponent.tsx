@@ -1,5 +1,6 @@
 import './ChatInputContainerComponent.css';
 import React, { useState } from 'react';
+import axios from 'axios';
 
 interface Props {
   onSendMessage: (message: string) => void;
@@ -16,8 +17,21 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
   
   
   const handleSendClick = () => {
+    const apiUrl = 'http://localhost:8000/message';
+  
+    axios.post(apiUrl, { message })
+      .then(response => {
+        console.log("response");
+  
+        if (response.status === 200) {
+          console.log('Message sent');
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  
     onSendMessage(message);
-    console.log(message);  // Lägg till denna för att se uppdateringar
     setMessage('');
   };
 
