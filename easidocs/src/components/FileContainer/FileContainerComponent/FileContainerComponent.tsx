@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import FileListComponent from '../FileListComponent/FileListComponent';
 import './FileContainerComponent.css';
 import { listen } from '@tauri-apps/api/event'
+import axios from 'axios';
 
 function FileContainerComponent() {
   const [dragging, setDragging] = useState(false);
@@ -22,16 +23,38 @@ function FileContainerComponent() {
     setDragging(false);
   };
 
+  const handleFileUpload = (file_paths: string[]) => {
+    
+    const apiUrl = 'http://localhost:8000/upload';
+    console.log(file_paths);
+    
+    // send the array of paths to the server
+    axios.post(apiUrl, { file_paths })
+      .then(response => {
+        if (response.status === 200) {
+          console.log('Files uploaded');
+        } else {
+          console.log('Failed to upload files');
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
   useEffect(() => {
     const unlisten = listen('tauri://file-drop', event => {
       
-      const payload = event.payload; 
-      console.log(payload);
-      if (Array.isArray(payload)) {
-        const newFileNames = payload.map(path => path.split('/').pop() || '');
+      const filePaths = event.payload; 
+      if (Array.isArray(filePaths)) {
+        
+        const validFileTypes = ['pdf', 'docx', 'doc', 'txt', 'md']; // remove files from filePaths that is not pdf, docx, doc, txt, md files
+        const validFilePaths = filePaths.filter(path => validFileTypes.includes(path.split('.').pop() || ''));
+        const newFileNames = validFilePaths.map(path => path.split('/').pop() || '');
         setFileNames(existingFileNames => [...existingFileNames, ...newFileNames]);
-        console.log(newFileNames[0]);
-        console.log(payload[0])
+
+        handleFileUpload(validFilePaths);
+        
       }
 
       setDragging(false);
