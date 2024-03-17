@@ -19,9 +19,16 @@ def load_document(file):
     if (file.endswith(".txt") | file.endswith(".md")):
         new_documents =  TextLoader(file).load()
     
+    filename = os.path.basename(file)
+    print("filename: ", filename)
+
+    # add filename to metadata
+    for doc in new_documents:
+        doc.metadata['source'] = filename
 
     # skapa JSON från de nya dokumenten
     new_data = [{'page_content': doc.page_content, 'metadata': doc.metadata} for doc in new_documents]
+    
     
 
     # om fil redan finns
