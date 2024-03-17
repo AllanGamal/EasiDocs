@@ -84,7 +84,7 @@ async fn load_file_list() -> HttpResponse {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    env_logger::init();
+    
     HttpServer::new(|| { // create a new server
         let cors = Cors::permissive(); 
 
