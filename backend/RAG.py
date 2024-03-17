@@ -28,11 +28,15 @@ from langchain.docstore.document import Document
 
 # stop the timer
 
-def runItAll(query):
+
+
+def get_rag_response(query):
     print("running")
 
     # save in chromadb folder
-    vector_dir = "/Users/allangamal/Documents/GitHub/EasiDocs/backend/chromadb"
+    vector_dir = "../../backend/chromadb" # from server dir
+    #vector_dir = "chromadb" # running from this file
+
 
     import time
     # initialize the vector store/db
@@ -40,8 +44,6 @@ def runItAll(query):
     db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
 
     retriever = db.as_retriever(search_kwargs={"k": 3}) # k=3 => 3 sources
-    db = 1
-    embedding_function = 1
     llm = Ollama(model="mistral")
     
     start = time.time()
@@ -54,7 +56,6 @@ def runItAll(query):
     )
     query2_en = "Have AR or VR revealed any potential in the education sector?"
     result = qa.invoke(query)
-
     answer = result["result"]
     sources = result["source_documents"]
     end = time.time()

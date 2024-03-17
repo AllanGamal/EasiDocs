@@ -23,6 +23,8 @@ function FileContainerComponent() {
     setDragging(false);
   };
 
+  
+
   const handleFileUpload = (file_paths: string[]) => {
     
     const apiUrl = 'http://localhost:8001/upload';
@@ -41,6 +43,24 @@ function FileContainerComponent() {
         console.error(error);
       });
   }
+  const loadFileList = () => {
+    const apiUrl = 'http://localhost:8001/files';
+    axios.get(apiUrl)
+      .then(response => {
+        if (response.status === 200) {
+          setFileNames(response.data);
+        } else {
+          console.log('Failed to fetch files');
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+  useEffect(() => {
+    loadFileList();
+  }
+  , []);
 
   useEffect(() => {
     const unlisten = listen('tauri://file-drop', event => {
@@ -54,6 +74,7 @@ function FileContainerComponent() {
         setFileNames(existingFileNames => [...existingFileNames, ...newFileNames]);
 
         handleFileUpload(validFilePaths);
+        
         
       }
 
