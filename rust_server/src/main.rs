@@ -3,6 +3,7 @@ use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use serde::Deserialize;
 use std::fs;
 use pyo3::prelude::*;
+use std::path::Path;
 
 
 #[derive(Deserialize)]
@@ -48,9 +49,24 @@ async fn execute_rag_query(query: String) -> PyResult<String> {
     })
 }
 
+
+
 async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
+    let documents_store_dir = "../../backend/pdf";
+
     println!("Received file paths: {:?}", paths.file_paths);
-    HttpResponse::Ok().body("File paths received")
+
+    for path in &paths.file_paths {
+        let file_name = Path::new(path).file_name().unwrap();
+        let destination = format!("{}/{}", documents_store_dir, file_name.to_str().unwrap());
+
+        match fs::copy(path, &destination) {
+            Ok(_) => println!("Successfully copied {} to {}", path, destination),
+            Err(e) => eprintln!("Failed to copy {} to {}: {}", path, destination, e),
+        }
+    }
+
+    HttpResponse::Ok().body("File paths received and files copied")
 }
 
 

@@ -11,8 +11,6 @@ function FileContainerComponent() {
   const onRemoveFile = (file: string) => {
     const apiUrl = "http://localhost:8001/delete";
     
-   
-    console.log(file)
     
     axios.delete(apiUrl, { data: { file_path: "pdf/" + file } })
     .then(response => {
@@ -50,6 +48,7 @@ function FileContainerComponent() {
     axios.post(apiUrl, { file_paths })
       .then(response => {
         if (response.status === 200) {
+          console.log(response.data);
           console.log('Files uploaded');
         } else {
           console.log('Failed to upload files');
