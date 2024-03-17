@@ -3,6 +3,7 @@ use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use serde::Deserialize;
 use std::fs;
 use pyo3::prelude::*;
+use std::path::Path;
 
 
 #[derive(Deserialize)]
@@ -48,10 +49,61 @@ async fn execute_rag_query(query: String) -> PyResult<String> {
     })
 }
 
-async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
-    println!("Received file paths: {:?}", paths.file_paths);
-    HttpResponse::Ok().body("File paths received")
+
+async fn load_documents_to_db(paths: Vec<String>) -> PyResult<()> {
+    Python::with_gil(|py| {
+        let sys = PyModule::import(py, "sys")?;
+        sys.getattr("path")?.call_method1("append", ("../../backend",))?;
+        
+        let python_script = PyModule::import(py, "RAG")?;
+
+        // Convert the Rust Vec<String> to Python list
+        let py_paths = paths.into_py(py);
+
+        // Call the Python function without extracting the return value
+        python_script.call_method1("load_documents_to_db", (py_paths,))?;
+
+        Ok(())
+    })
 }
+
+
+
+
+
+async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
+    let documents_store_dir = "../../backend/pdf";
+    println!("Received file paths: {:?}", paths.file_paths);
+
+    for path in &paths.file_paths {
+        let file_name = Path::new(path).file_name().unwrap();
+        let destination = format!("{}/{}", documents_store_dir, file_name.to_str().unwrap());
+        println!("Path: {}", path);
+
+        if !Path::new(&destination).exists() {
+            match fs::copy(path, &destination) {
+                Ok(_) => {
+                    println!("Successfully copied {} to {}", path, destination);
+
+                    // Clone only the file paths for Python processing
+                    let cloned_paths = paths.file_paths.clone();
+                    println!("Cloned paths: {:?}", cloned_paths);
+
+                    match load_documents_to_db(cloned_paths).await {
+                        Ok(_) => println!("Successfully loaded documents to the database"),
+                        Err(e) => eprintln!("Failed to load documents to the database: {:?}", e),
+                    }
+                },
+                Err(e) => eprintln!("Failed to copy {} to {}: {}", path, destination, e),
+            }
+        } else {
+            println!("File {} already exists in {}", file_name.to_str().unwrap(), documents_store_dir);
+        }
+    }
+
+    HttpResponse::Ok().body("File paths received and files copied")
+}
+
 
 
 async fn load_file_list() -> HttpResponse {
