@@ -33,7 +33,7 @@ async fn handle_message(message: web::Json<Message>) -> impl Responder {
 async fn execute_rag_query(query: String) -> PyResult<String> {
     Python::with_gil(|py| {
         let sys = PyModule::import(py, "sys").unwrap();
-        sys.getattr("path").unwrap().call_method1("append", ("/Users/allangamal/Documents/GitHub/EasiDocs/backend",)).unwrap();
+        sys.getattr("path").unwrap().call_method1("append", ("../../backend",)).unwrap();
         
         let python_script = PyModule::import(py, "RAG")?;
         let result: String = python_script.call_method1("runItAll", (&query,))?.extract()?;
