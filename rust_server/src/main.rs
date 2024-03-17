@@ -60,9 +60,14 @@ async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
         let file_name = Path::new(path).file_name().unwrap();
         let destination = format!("{}/{}", documents_store_dir, file_name.to_str().unwrap());
 
-        match fs::copy(path, &destination) {
-            Ok(_) => println!("Successfully copied {} to {}", path, destination),
-            Err(e) => eprintln!("Failed to copy {} to {}: {}", path, destination, e),
+        // copy the file if it does not already exist in dir
+        if !Path::new(&destination).exists() {
+            match fs::copy(path, &destination) {
+                Ok(_) => println!("Successfully copied {} to {}", path, destination),
+                Err(e) => eprintln!("Failed to copy {} to {}: {}", path, destination, e),
+            }
+        } else {
+            println!("File {} already exists in {}", file_name.to_str().unwrap(), documents_store_dir);
         }
     }
 

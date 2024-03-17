@@ -4,6 +4,7 @@ import './FileContainerComponent.css';
 import { listen } from '@tauri-apps/api/event'
 import axios from 'axios';
 
+
 function FileContainerComponent() {
   const [dragging, setDragging] = useState(false);
   const [fileNames, setFileNames] = useState<string[]>([]);
@@ -78,28 +79,32 @@ function FileContainerComponent() {
   , []);
 
   useEffect(() => {
-    const unlisten = listen('tauri://file-drop', event => {
-      
-      const filePaths = event.payload; 
-      if (Array.isArray(filePaths)) {
+      const unlisten = listen('tauri://file-drop', event => {
         
-        const validFileTypes = ['pdf', 'docx', 'doc', 'txt', 'md']; // remove files from filePaths that is not pdf, docx, doc, txt, md files
-        const validFilePaths = filePaths.filter(path => validFileTypes.includes(path.split('.').pop() || ''));
-        const newFileNames = validFilePaths.map(path => path.split('/').pop() || '');
-        setFileNames(existingFileNames => [...existingFileNames, ...newFileNames]);
+        const filePaths = event.payload; 
+        if (Array.isArray(filePaths)) {
+          
+          const validFileTypes = ['pdf', 'docx', 'doc', 'txt', 'md']; // remove files from filePaths that is not pdf, docx, doc, txt, md files
+          const validFilePaths = filePaths.filter(path => validFileTypes.includes(path.split('.').pop() || ''));
+          const newFileNames = validFilePaths.map(path => path.split('/').pop() || '');
 
-        handleFileUpload(validFilePaths);
-        
-        
-      }
+          // Filter out file names that already exist
+          const uniqueFileNames = newFileNames.filter(name => !fileNames.includes(name));
+          setFileNames(existingFileNames => [...existingFileNames, ...uniqueFileNames]);
 
-      setDragging(false);
-    });
+          // Only upload files that are not already in the list
+          const uniqueFilePaths = validFilePaths.filter((index) => !fileNames.includes(newFileNames[index]));
+          handleFileUpload(uniqueFilePaths);
+          
+        }
 
-    return () => {
-      unlisten.then((fn) => fn());
-    };
-  }, []);
+        setDragging(false);
+      });
+
+      return () => {
+        unlisten.then((fn) => fn());
+      };
+    }, [fileNames]); // Add fileNames as a dependency
 
   return (
     <div
