@@ -14,6 +14,11 @@ struct FilePaths {
     file_paths: Vec<String>,
 }
 
+#[derive(Deserialize)]
+struct FilePath {
+    file_path: String,
+}
+
 async fn handle_message(message: web::Json<Message>) -> impl Responder {
     println!("Received message: {}", message.message);
     let query = message.message.clone();
@@ -78,7 +83,21 @@ async fn load_file_list() -> HttpResponse {
 }
 
 
+async fn delete_file(file_path: web::Json<FilePath>) -> HttpResponse {
+    let path = &file_path.file_path;
 
+    // Attempt to delete the file
+    match fs::remove_file(path) {
+        Ok(_) => {
+            println!("File deleted: {}", path);
+            HttpResponse::Ok().finish()
+        },
+        Err(e) => {
+            eprintln!("Failed to delete file {}: {}", path, e);
+            HttpResponse::InternalServerError().finish()
+        },
+    }
+}
 
 
 
@@ -102,6 +121,10 @@ async fn main() -> std::io::Result<()> {
                 // Set up a route for handling file uploads.
                 web::resource("/files")
                     .route(web::get().to(load_file_list)),
+            ).service(
+                // Set up a route for handling file uploads.
+                web::resource("/delete")
+                    .route(web::delete().to(delete_file)),
             )
     })
     .bind("127.0.0.1:8001")?
