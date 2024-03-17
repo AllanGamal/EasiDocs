@@ -25,9 +25,9 @@ def load_document(file):
     
 
     # om fil redan finns
-    if os.path.exists('documents.json'):
+    if os.path.exists('../../backend/documents.json'):
         # lägg till data till bifintlig fil
-        with open('documents.json', 'r') as json_file:
+        with open('../../backend/documents.json', 'r') as json_file:
             try:
                 existing_data = json.load(json_file) 
             except json.JSONDecodeError:  # hanterar  korrupta filer
@@ -39,7 +39,7 @@ def load_document(file):
     combined_data = existing_data + new_data
 
     # Skriv den kombinerade datan till filen
-    with open('documents.json', 'w') as json_file:
+    with open('../../backend/documents.json', 'w') as json_file:
         json.dump(combined_data, json_file, indent=4)
     
     return new_documents
@@ -51,6 +51,7 @@ def load_document_batch(files):
     documents = []
     for file in files:
         documents.append(load_document(file))
+    print("Going through the documents")
     return documents
    
     

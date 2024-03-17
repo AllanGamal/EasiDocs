@@ -43,6 +43,7 @@ function FileContainerComponent() {
   const handleFileUpload = (file_paths: string[]) => {
     
     const apiUrl = 'http://localhost:8001/upload';
+    console.log("file_paths");
     console.log(file_paths);
     
     // send the array of paths to the server

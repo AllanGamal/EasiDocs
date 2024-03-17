@@ -50,20 +50,50 @@ async fn execute_rag_query(query: String) -> PyResult<String> {
 }
 
 
+async fn load_documents_to_db(paths: Vec<String>) -> PyResult<()> {
+    Python::with_gil(|py| {
+        let sys = PyModule::import(py, "sys")?;
+        sys.getattr("path")?.call_method1("append", ("../../backend",))?;
+        
+        let python_script = PyModule::import(py, "RAG")?;
+
+        // Convert the Rust Vec<String> to Python list
+        let py_paths = paths.into_py(py);
+
+        // Call the Python function without extracting the return value
+        python_script.call_method1("load_documents_to_db", (py_paths,))?;
+
+        Ok(())
+    })
+}
+
+
+
+
 
 async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
     let documents_store_dir = "../../backend/pdf";
-
     println!("Received file paths: {:?}", paths.file_paths);
 
     for path in &paths.file_paths {
         let file_name = Path::new(path).file_name().unwrap();
         let destination = format!("{}/{}", documents_store_dir, file_name.to_str().unwrap());
+        println!("Path: {}", path);
 
-        // copy the file if it does not already exist in dir
         if !Path::new(&destination).exists() {
             match fs::copy(path, &destination) {
-                Ok(_) => println!("Successfully copied {} to {}", path, destination),
+                Ok(_) => {
+                    println!("Successfully copied {} to {}", path, destination);
+
+                    // Clone only the file paths for Python processing
+                    let cloned_paths = paths.file_paths.clone();
+                    println!("Cloned paths: {:?}", cloned_paths);
+
+                    match load_documents_to_db(cloned_paths).await {
+                        Ok(_) => println!("Successfully loaded documents to the database"),
+                        Err(e) => eprintln!("Failed to load documents to the database: {:?}", e),
+                    }
+                },
                 Err(e) => eprintln!("Failed to copy {} to {}: {}", path, destination, e),
             }
         } else {
@@ -73,6 +103,7 @@ async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
 
     HttpResponse::Ok().body("File paths received and files copied")
 }
+
 
 
 async fn load_file_list() -> HttpResponse {
