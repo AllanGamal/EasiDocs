@@ -27,10 +27,10 @@ from langchain.docstore.document import Document
 # define the documents
 
 # stop the timer
+'''
 load_document_batch(["pdf/ark.pdf", "pdf/test.pdf", "pdf/22.pdf", "pdf/33.pdf",  "pdf/64.pdf","pdf/46.pdf", "pdf/180.pdf"])
-'''
 load_document_batch(["pdf/ark.pdf", "pdf/test.pdf", "pdf/22.pdf", "pdf/33.pdf",  "pdf/64.pdf"])
-'''
+
 
 # cocument splitting and cleaning (running java code)
 def run_maven():
@@ -75,7 +75,7 @@ db = Chroma.from_documents(
 
 
 
-
+'''
 
 
 def get_rag_response(query):
