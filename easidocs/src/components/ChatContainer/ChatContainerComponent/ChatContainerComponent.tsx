@@ -7,11 +7,10 @@ import { Message } from '../ChatHistoryContainerComponent/ChatHistoryContainerCo
 function ChatContainerComponent() {
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
 
-  const addChatToHistory = (message: string) => {
-    const newMessage: Message = { text: message, type: 'bot' };  // Assuming all messages from this method are 'user' type
-    setChatHistory([...chatHistory, newMessage]);
+  const addChatToHistory = (message: Message) => {
+    setChatHistory(prevHistory => [...prevHistory, message]);
   };
-
+  
   return (
     <div className="chat-container">
       <ChatHistoryContainerComponent chatHistory={chatHistory} />
