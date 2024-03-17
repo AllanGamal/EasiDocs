@@ -84,19 +84,46 @@ async fn load_file_list() -> HttpResponse {
 
 
 async fn delete_file(file_path: web::Json<FilePath>) -> HttpResponse {
-    let path = &file_path.file_path;
+    // file path construction
+    let base_path = "../../backend/";
+    let full_path = base_path.to_owned() + &file_path.file_path;
 
-    // Attempt to delete the file
-    match fs::remove_file(path) {
+    // delete the file from the filesystem
+    match fs::remove_file(&full_path) {
         Ok(_) => {
-            println!("File deleted: {}", path);
-            HttpResponse::Ok().finish()
+            println!("File deleted: {:?}", full_path);
+
+            // Proceed to delete the associated document from the database
+            match delete_doc_from_database(file_path.file_path.clone()).await {
+                Ok(_) => {
+                    println!("Document deletion from database was successful");
+                    HttpResponse::Ok().finish()
+                },
+                Err(e) => {
+                    eprintln!("Failed to delete document from database: {:?}", e);
+                    HttpResponse::InternalServerError().finish()
+                }
+            }
         },
         Err(e) => {
-            eprintln!("Failed to delete file {}: {}", path, e);
+            eprintln!("Failed to delete file {:?}: {}", full_path, e);
             HttpResponse::InternalServerError().finish()
         },
     }
+}
+// path = string
+async fn delete_doc_from_database(path: String) -> PyResult<()> {
+    Python::with_gil(|py| {
+        let sys = PyModule::import(py, "sys")?;
+        sys.getattr("path")?.call_method1("append", ("../../backend",))?;
+        
+        let python_script = PyModule::import(py, "databaseManager")?;
+        
+        // Pass path directly as a string, not as part of a tuple
+        python_script.call_method1("deleteDocumentsBySourceFromDb", (path,))?;
+
+        Ok(())
+    })
 }
 
 

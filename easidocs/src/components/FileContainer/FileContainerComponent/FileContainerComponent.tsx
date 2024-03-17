@@ -10,10 +10,11 @@ function FileContainerComponent() {
 
   const onRemoveFile = (file: string) => {
     const apiUrl = "http://localhost:8001/delete";
-    const file_dir = "../../backend/pdf/"
     
+   
+    console.log(file)
     
-    axios.delete(apiUrl, { data: { file_path: file_dir + file } })
+    axios.delete(apiUrl, { data: { file_path: "pdf/" + file } })
     .then(response => {
       if (response.status === 200) {
           setFileNames(existingFileNames => existingFileNames.filter(name => name !== file));
