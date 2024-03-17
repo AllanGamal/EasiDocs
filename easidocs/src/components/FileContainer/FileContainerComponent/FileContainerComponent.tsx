@@ -9,7 +9,23 @@ function FileContainerComponent() {
   const [fileNames, setFileNames] = useState<string[]>([]);
 
   const onRemoveFile = (file: string) => {
-    setFileNames(existingFileNames => existingFileNames.filter(name => name !== file));
+    const apiUrl = "http://localhost:8001/delete";
+    
+   
+    console.log(file)
+    
+    axios.delete(apiUrl, { data: { file_path: "pdf/" + file } })
+    .then(response => {
+      if (response.status === 200) {
+          setFileNames(existingFileNames => existingFileNames.filter(name => name !== file));
+          console.log('File deleted');
+        } else {
+          console.log('Failed to delete file');
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
   }
 
   const dragOver = (event: React.DragEvent<HTMLDivElement>) => {
