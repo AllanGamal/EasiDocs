@@ -135,8 +135,6 @@ cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' from command
 cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' in SDK '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk'
 cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' from command line tools installation
 cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' in SDK '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk'
-cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' from command line tools installation
-cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' in SDK '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk'
 exit status: 0
 exit status: 0
 exit status: 0
@@ -159,18 +157,20 @@ cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' from command
 cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' in SDK '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk'
 cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' from command line tools installation
 cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' in SDK '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk'
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
 cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' from command line tools installation
 cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' in SDK '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk'
 cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' from command line tools installation
 cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' in SDK '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk'
-exit status: 0
-exit status: 0
-exit status: 0
-exit status: 0
-exit status: 0
-exit status: 0
-exit status: 0
-exit status: 0
+cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' from command line tools installation
+cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' in SDK '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk'
 cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' from command line tools installation
 cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' in SDK '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk'
 cargo:warning=xcrun: error: unable to lookup item 'PlatformVersion' from command line tools installation
