@@ -1,36 +1,66 @@
 @import '../../ComponentsStyle/ComponentsVariables.scss';
 
 .file-container {
-    background-color: var(--primary-background-color);
-    max-width: 300px;
-    min-width: 200px;
-    width: 25%;
-    overflow-y: auto;
-    height: calc(100vh - 140px);
-   
+  background-color: var(--primary-background-color);
+  max-width: 300px;
+  min-width: 200px;
+  width: 25%;
+  overflow-y: auto;
+  height: calc(100vh - 140px);
+  position: relative;
+  /* make it unclickable*/
+  &.uploading {
+    pointer-events: none;
+  }
   
-    &::-webkit-scrollbar {
-      width: 5px;
-    }
-  
-    &::-webkit-scrollbar-track {
-      background: var(--secondary-background-color);
-    }
-  
-    &::-webkit-scrollbar-thumb {
-      background: var(--primary-background-color)
-    }
-  
-    &::-webkit-scrollbar-thumb:hover {
-      background: var(--secondary-background-color);
-    }
-  
-    #file-title {
-      background-color: inherit;
-      font-weight: 600;
-      padding: 20px;
-      text-align: center;
-      color: var(--primary-text-color);
+
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--secondary-background-color);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--primary-background-color)
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-background-color);
+  }
+
+
+
+
+  #file-title {
+    background-color: inherit;
+    font-weight: 600;
+    padding: 20px;
+    text-align: center;
+    color: var(--primary-text-color);
+  }
+
+  .uploading-text {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    top: 50%;
+    left: 20%;
+    padding-top: 20px;
+    color: red;
+    font-weight: 1000;
+  }
+
+  .file-container-zone {
+
+    &.uploading
+    {
+      
+      /* blur the text */
+      filter: blur(1px);
+
     }
 
     .dropZone {
@@ -58,13 +88,13 @@
         background-color: var(--primary-background-color-hover);
         color: white;
       }
-  
-      
+
+
 
       &.dragging {
         background-color: var(--secondary-background-color-hover);
       }
     }
-
-    
   }
+
+}

@@ -14,6 +14,11 @@
   width: 25%;
   overflow-y: auto;
   height: calc(100vh - 140px);
+  position: relative;
+  /* make it unclickable*/
+}
+.file-container.uploading {
+  pointer-events: none;
 }
 .file-container::-webkit-scrollbar {
   width: 5px;
@@ -34,7 +39,21 @@
   text-align: center;
   color: var(--primary-text-color);
 }
-.file-container .dropZone {
+.file-container .uploading-text {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  top: 50%;
+  left: 20%;
+  padding-top: 20px;
+  color: red;
+  font-weight: 1000;
+}
+.file-container .file-container-zone.uploading {
+  /* blur the text */
+  filter: blur(1px);
+}
+.file-container .file-container-zone .dropZone {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -55,10 +74,10 @@
   max-width: 260px;
   transition: all 0.3s ease;
 }
-.file-container .dropZone:hover {
+.file-container .file-container-zone .dropZone:hover {
   background-color: var(--primary-background-color-hover);
   color: white;
 }
-.file-container .dropZone.dragging {
+.file-container .file-container-zone .dropZone.dragging {
   background-color: var(--secondary-background-color-hover);
 }/*# sourceMappingURL=FileContainerComponent.css.map */
