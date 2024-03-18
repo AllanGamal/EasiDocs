@@ -11,6 +11,7 @@ from sys import stdin
 
 # supports .docx, .doc, .pdf, .txt, .md
 def load_document(file):
+    
     new_documents = []
     if (file.endswith(".docx") | file.endswith(".doc")):
         new_documents =  UnstructuredWordDocumentLoader(file).load()
@@ -20,7 +21,7 @@ def load_document(file):
         new_documents =  TextLoader(file).load()
     
     filename = os.path.basename(file)
-    print("filename: ", filename)
+    print("Loading filename: " + filename)
 
     # add filename to metadata
     for doc in new_documents:
@@ -58,7 +59,6 @@ def load_document_batch(files):
     documents = []
     for file in files:
         documents.append(load_document(file))
-    print("Going through the documents")
     return documents
    
     

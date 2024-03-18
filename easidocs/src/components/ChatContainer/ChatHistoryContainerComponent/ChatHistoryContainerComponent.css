@@ -27,7 +27,7 @@
 .chat-history-container .chat-history-list {
   background-color: var(--secondary-background-color);
   width: 100%;
-  padding: 20px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -36,12 +36,12 @@
 .chat-history-container .chat-history-list .chat-user-container {
   background-color: var(--secondary-background-color);
   width: 100%;
-  max-width: 750px;
+  max-width: 850px;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  padding: 20px;
+  padding: 10px;
   border: none;
   border-top: 1px solid var(--secondary-background-color-hover);
   border-bottom: 1px solid var(--secondary-background-color-hover);
@@ -82,4 +82,5 @@
 .chat-history-container .chat-history-list .chat-user-container .chat-user .chat-history-textfield {
   color: var(--primary-text-color);
   text-align: left;
+  margin: auto;
 }/*# sourceMappingURL=ChatHistoryContainerComponent.css.map */

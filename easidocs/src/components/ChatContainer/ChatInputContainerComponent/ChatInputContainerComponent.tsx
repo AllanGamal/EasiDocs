@@ -13,6 +13,7 @@ interface Props {
 
 function ChatInputContainerComponent({ onSendMessage }: Props) {
   const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
@@ -26,12 +27,12 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
     
     
     if (message !== '') {
+      setIsLoading(true);
       onSendMessage({ text: message, type: 'user' });
       setMessage('');
       axios.post(apiUrl, { message })
       .then(response => {
-        
-        
+        setIsLoading(false);
         if (response.status === 200) {
           console.log('Message sent');
           onSendMessage({ text: response.data, type: 'bot' });
@@ -54,7 +55,7 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
   };
 
   return (
-    <div className="chat-input-container">
+    <div className="chat-input-container" >
       <div className="chat-input-element-container">
         <input
           type="text"
@@ -62,8 +63,13 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
           placeholder="Ask a question..."
           value={message}
           onChange={handleInputChange}
-        ></input>
-        <button type="button" className="btn btn-primary" onClick={handleSendClick}>Send</button>
+          
+        >
+          
+        </input>
+        <button type="button" className="btn btn-primary" onClick={handleSendClick} disabled={isLoading}>
+        {isLoading ? '....' : 'Send'}
+        </button>
       </div>
     </div>
   );
