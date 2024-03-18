@@ -14,9 +14,8 @@
 
         &.deleting {
             background-color: rgba(255, 93, 93, 0.102);
-            /* make ut unclickable */
             pointer-events: none;
-            
+
 
             &:hover {
                 background-color: rgba(255, 93, 93, 0.102);
@@ -24,12 +23,12 @@
         }
 
         label {
-
             font-size: 0.9rem;
-
             color: var(--primary-text-color);
-
-
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
         }
 
         .btn-close.remove-file-button {

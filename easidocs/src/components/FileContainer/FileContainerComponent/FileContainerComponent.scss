@@ -43,6 +43,7 @@
   }
 
   .uploading-text {
+    z-index: 99;
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -62,6 +63,9 @@
       filter: blur(1px);
 
     }
+
+    
+
 
     .dropZone {
       position: fixed;
@@ -89,10 +93,30 @@
         color: white;
       }
 
+      &.over {
+        /* make it pulse */
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+          background-color: rgba(43, 183, 43, 0.099);
+        }
+        50% {
+          transform: scale(1.05);
+          background-color: rgba(0, 255, 0, 0.099);
+        }
 
 
-      &.dragging {
-        background-color: var(--secondary-background-color-hover);
+      }
+
+      &.deleting {
+        background-color: rgba(255, 93, 93, 0.102);
+        /* set blur to 0 */
+        filter: blur(0.5px);
+
+        
       }
     }
   }

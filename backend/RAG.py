@@ -138,13 +138,12 @@ def get_rag_response(query):
     vector_dir = "../../backend/chromadb/VectorStore" # from server dir
     #vector_dir = "chromadb" # running from this file
 
-
     import time
     # initialize the vector store/db
     embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
     db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
 
-    retriever = db.as_retriever(search_kwargs={"k": 3}) # k=3 => 3 sources
+    retriever = db.as_retriever(search_kwargs={"k": 4}) # k=3 => 3 sources
     llm = Ollama(model="mistral")
     
     start = time.time()
