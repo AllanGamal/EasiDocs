@@ -50,6 +50,8 @@
       padding: 20px;
       text-align: center;
       width: calc(20% - 40px);
+      min-width: calc(200px - 40px);
+      max-width: 260px;
       transition: all 0.3s ease;
 
       &:hover {

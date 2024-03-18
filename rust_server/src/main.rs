@@ -21,13 +21,12 @@ struct FilePath {
 }
 
 async fn handle_message(message: web::Json<Message>) -> impl Responder {
-    println!("Received message: {}", message.message);
+    println!("Received query: {}", message.message);
     let query = message.message.clone();
 
    
     match execute_rag_query(query).await {
         Ok(result) => {
-            println!("Result: {}", result);
             HttpResponse::Ok().body(result) 
         }
         Err(e) => {
@@ -44,8 +43,7 @@ async fn execute_rag_query(query: String) -> PyResult<String> {
         
         let python_script = PyModule::import(py, "RAG")?;
         let result: String = python_script.call_method1("get_rag_response", (&query,))?.extract()?;
-        println!("Python function returned: {}", result);
-        Ok(result)
+        Ok(result) // result is the response fom llm
     })
 }
 
@@ -78,7 +76,6 @@ async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
     for path in &paths.file_paths {
         let file_name = Path::new(path).file_name().unwrap();
         let destination = format!("{}/{}", documents_store_dir, file_name.to_str().unwrap());
-        println!("Path: {}", path);
 
         if !Path::new(&destination).exists() {
             match fs::copy(path, &destination) {
@@ -87,10 +84,13 @@ async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
 
                     // Clone only the file paths for Python processing
                     let cloned_paths = paths.file_paths.clone();
-                    println!("Cloned paths: {:?}", cloned_paths);
+                    println!("");
 
                     match load_documents_to_db(cloned_paths).await {
-                        Ok(_) => println!("Successfully loaded documents to the database"),
+                        Ok(_) => {
+                            println!("Successfully loaded documents to the database with the file paths: {:?}", paths.file_paths);  
+                            println!("");   
+                        },
                         Err(e) => eprintln!("Failed to load documents to the database: {:?}", e),
                     }
                 },
@@ -108,7 +108,7 @@ async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
 
 async fn load_file_list() -> HttpResponse {
     let uploads_dir = "../../backend/pdf";
-    println!("Reading files from: {}", uploads_dir);
+    
 
     // read the directory's contents
     match fs::read_dir(uploads_dir) {
@@ -124,7 +124,7 @@ async fn load_file_list() -> HttpResponse {
                     }
                 })
             }).collect();
-            println!("Files: {:?}", file_names);
+            
             HttpResponse::Ok().json(file_names) // list of files as a JSON response
         },
         Err(e) => {
@@ -143,12 +143,13 @@ async fn delete_file(file_path: web::Json<FilePath>) -> HttpResponse {
     // delete the file from the filesystem
     match fs::remove_file(&full_path) {
         Ok(_) => {
-            println!("File deleted: {:?}", full_path);
 
             // Proceed to delete the associated document from the database
             match delete_doc_from_database(file_path.file_path.clone()).await {
                 Ok(_) => {
-                    println!("Document deletion from database was successful");
+                    // print Document deletion from database was successful with file path
+                    println!("Document deletion from database was successful with file path: {:?}", file_path.file_path);
+                    println!("");
                     HttpResponse::Ok().finish()
                 },
                 Err(e) => {
