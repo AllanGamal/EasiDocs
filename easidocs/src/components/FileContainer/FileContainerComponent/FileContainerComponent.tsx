@@ -9,15 +9,16 @@ function FileContainerComponent() {
   const [dragging, setDragging] = useState(false);
   const [fileNames, setFileNames] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [deletingFiles, setDeletingFiles] = useState<string[]>([]);
 
 
   const onRemoveFile = (file: string) => {
     const apiUrl = "http://localhost:8001/delete";
-
-
+    setDeletingFiles(prevFiles => [...prevFiles, file]);
+    
     axios.delete(apiUrl, { data: { file_path: "pdf/" + file } })
       .then(response => {
+        setDeletingFiles(prevFiles => prevFiles.filter(f => f !== file));
         if (response.status === 200) {
           setFileNames(existingFileNames => existingFileNames.filter(name => name !== file));
           console.log('File deleted');
@@ -26,6 +27,7 @@ function FileContainerComponent() {
         }
       })
       .catch(error => {
+        setDeletingFiles(prevFiles => prevFiles.filter(f => f !== file));
         console.error(error);
       });
   }
@@ -127,8 +129,7 @@ function FileContainerComponent() {
       <div
         className={`file-container-zone ${isUploading ? 'uploading' : ''}`}
       >
-        <FileListComponent files={fileNames} onRemoveFile={onRemoveFile} />
-        <div
+  <FileListComponent files={fileNames} onRemoveFile={onRemoveFile} deletingFiles={deletingFiles} />  <div
           className={`dropZone ${dragging ? 'dragging' : ''}`}
           onDragOver={(e) => dragOver(e)}
           onDragLeave={(e) => dragLeave(e)}>

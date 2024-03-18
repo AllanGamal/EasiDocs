@@ -17,6 +17,14 @@
   border-bottom: 1px solid var(--secondary-background-color);
   border-top: 1px solid var(--secondary-background-color);
 }
+.file-list .file-item.deleting {
+  background-color: rgba(255, 93, 93, 0.102);
+  /* make ut unclickable */
+  pointer-events: none;
+}
+.file-list .file-item.deleting:hover {
+  background-color: rgba(255, 93, 93, 0.102);
+}
 .file-list .file-item label {
   font-size: 0.9rem;
   color: var(--primary-text-color);
