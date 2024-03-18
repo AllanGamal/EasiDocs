@@ -7,7 +7,7 @@ from langchain_community.embeddings.sentence_transformer import (
 )
 from langchain_community.vectorstores import Chroma
 from langchain.chains import RetrievalQA
-from prompt_template import prompt as prompt
+from prompt_template import prompt as prompty
 import os.path
 from subprocess import STDOUT,PIPE
 from sys import stdin
@@ -147,12 +147,14 @@ def get_rag_response(query):
     llm = Ollama(model="mistral")
     
     start = time.time()
+    prompt = prompty()
+    start = time.time()
     qa = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type="stuff", 
         retriever=retriever, # 3 sources
         return_source_documents=True,
-        
+        chain_type_kwargs={"prompt": prompt}
     )
     query2_en = "Have AR or VR revealed any potential in the education sector?"
     result = qa.invoke(query)

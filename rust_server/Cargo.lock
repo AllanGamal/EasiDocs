@@ -1057,6 +1057,7 @@ dependencies = [
  "pyo3",
  "sanitize-filename",
  "serde",
+ "serde_json",
  "tokio",
 ]
 

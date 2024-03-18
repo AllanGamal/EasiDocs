@@ -9,6 +9,7 @@ function FileContainerComponent() {
   const [fileNames, setFileNames] = useState<string[]>([]);
   const [deletingFiles, setDeletingFiles] = useState<string[]>([]);
   const [uploadCount, setUploadCount] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   const [deletingCount, setDeletingCount] = useState(0);
   const [isOverDropZone, setIsOverDropZone] = useState(false);
 
@@ -58,24 +59,28 @@ function FileContainerComponent() {
     setIsOverDropZone(false);
     
     const apiUrl = 'http://localhost:8001/upload';
-    setUploadCount(prevCount => prevCount + 1);
-    
+    //setUploadCount(prevCount => prevCount + 1);
+    setIsUploading(true);
     
     axios.post(apiUrl, { file_paths })
       .then(response => {
         if (response.status === 200) {
           console.log(response.data);
           console.log('Files uploaded');
+          setIsUploading(false);
         } else {
+          setIsUploading(false);
           console.log('Failed to upload files');
         }
       })
       .catch(error => {
         console.error(error);
-      })
+        setIsUploading(false);
+      })/*
       .finally(() => {
         setUploadCount(prevCount => prevCount - 1);
       });
+      */
   }
 
   const loadFileList = () => {
@@ -134,16 +139,16 @@ function FileContainerComponent() {
   }, [deletingCount, isOverDropZone, fileNames]); // Add fileNames as a dependency
 
   return (
-    <div className={`file-container ${uploadCount > 0 ? 'uploading' : ''}`}>
+    <div className={`file-container ${isUploading ? 'uploading' : ''}`}>
       <h1 id="file-title">easiDocs</h1>
-      {uploadCount > 0 && (
+      {isUploading && (
         <div className="uploading-text" style={{ color: "white" }}>
           <label>Uploading</label>
           <label> Please wait...</label>
           </div>
       )}
       <div
-        className={`file-container-zone ${uploadCount > 0 ? 'uploading' : ''} `}
+        className={`file-container-zone ${isUploading ? 'uploading' : ''} `}
       >
   <FileListComponent files={fileNames} onRemoveFile={onRemoveFile} deletingFiles={deletingFiles} /> 
    <div
