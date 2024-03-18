@@ -6,47 +6,61 @@ import axios from 'axios';
 
 
 function FileContainerComponent() {
-  const [dragging, setDragging] = useState(false);
   const [fileNames, setFileNames] = useState<string[]>([]);
+  const [deletingFiles, setDeletingFiles] = useState<string[]>([]);
+  const [uploadCount, setUploadCount] = useState(0);
+  const [deletingCount, setDeletingCount] = useState(0);
+  const [isOverDropZone, setIsOverDropZone] = useState(false);
+
+
+  const handleDragOver = (event: React.DragEvent) => {
+    console.log(isOverDropZone);
+    event.preventDefault();
+    setIsOverDropZone(true);
+  };
+  
+  const handleDragLeave = () => {
+    setIsOverDropZone(false);
+    console.log(isOverDropZone);
+  };
+
 
   const onRemoveFile = (file: string) => {
     const apiUrl = "http://localhost:8001/delete";
+    setDeletingFiles(prevFiles => [...prevFiles, file]);
+    setDeletingCount(prevCount => prevCount + 1);
     
     
+    setTimeout(() => {
     axios.delete(apiUrl, { data: { file_path: "pdf/" + file } })
-    .then(response => {
-      if (response.status === 200) {
-          setFileNames(existingFileNames => existingFileNames.filter(name => name !== file));
+      .then(response => {
+        setDeletingFiles(prevFiles => prevFiles.filter(f => f !== file));
+        if (response.status === 200) {
+          setFileNames(existingFileNames => existingFileNames.filter(name => name !== file));      
           console.log('File deleted');
-        } else {
+        } else {      
           console.log('Failed to delete file');
         }
       })
-      .catch(error => {
+      .catch(error => {    
+        setDeletingFiles(prevFiles => prevFiles.filter(f => f !== file));
         console.error(error);
-      });
+      })
+      .finally(() => {
+        setDeletingCount(prevCount => prevCount - 1);
+      });;
+
+  }, deletingCount*1000);
   }
 
-  const dragOver = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setDragging(true);
-
-  };
-
-  const dragLeave = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setDragging(false);
-  };
-
-  
 
   const handleFileUpload = (file_paths: string[]) => {
+    setIsOverDropZone(false);
     
     const apiUrl = 'http://localhost:8001/upload';
-    console.log("file_paths");
-    console.log(file_paths);
+    setUploadCount(prevCount => prevCount + 1);
     
-    // send the array of paths to the server
+    
     axios.post(apiUrl, { file_paths })
       .then(response => {
         if (response.status === 200) {
@@ -58,8 +72,12 @@ function FileContainerComponent() {
       })
       .catch(error => {
         console.error(error);
+      })
+      .finally(() => {
+        setUploadCount(prevCount => prevCount - 1);
       });
   }
+
   const loadFileList = () => {
     const apiUrl = 'http://localhost:8001/files';
     axios.get(apiUrl)
@@ -77,49 +95,66 @@ function FileContainerComponent() {
   useEffect(() => {
     loadFileList();
   }
-  , []);
+    , []);
 
   useEffect(() => {
-      const unlisten = listen('tauri://file-drop', event => {
+    if (deletingCount > 0 || !isOverDropZone) {
+      return;
+    }
+    
+    
+    const unlisten = listen('tauri://file-drop', event => {
+
+      const filePaths = event.payload;
+      if (Array.isArray(filePaths)) {
+
+        const validFileTypes = ['pdf', 'docx', 'doc', 'txt', 'md']; // remove files from filePaths that is not pdf, docx, doc, txt, md files
+        const validFilePaths = filePaths.filter(path => validFileTypes.includes(path.split('.').pop() || ''));
+        const newFileNames = validFilePaths.map(path => path.split('/').pop() || '');
+
+        // Filter out file names that already exist
+        const uniqueFileNames = newFileNames.filter(name => !fileNames.includes(name));
+        setFileNames(existingFileNames => [...existingFileNames, ...uniqueFileNames]); // 
         
-        const filePaths = event.payload; 
-        if (Array.isArray(filePaths)) {
-          
-          const validFileTypes = ['pdf', 'docx', 'doc', 'txt', 'md']; // remove files from filePaths that is not pdf, docx, doc, txt, md files
-          const validFilePaths = filePaths.filter(path => validFileTypes.includes(path.split('.').pop() || ''));
-          const newFileNames = validFilePaths.map(path => path.split('/').pop() || '');
+        // Only upload files that are not already in the list
+        const uniqueFilePaths = validFilePaths.filter((index) => !fileNames.includes(newFileNames[index]));
+        handleFileUpload(uniqueFilePaths);
+         // 
 
-          // Filter out file names that already exist
-          const uniqueFileNames = newFileNames.filter(name => !fileNames.includes(name));
-          setFileNames(existingFileNames => [...existingFileNames, ...uniqueFileNames]);
+      }
 
-          // Only upload files that are not already in the list
-          const uniqueFilePaths = validFilePaths.filter((index) => !fileNames.includes(newFileNames[index]));
-          handleFileUpload(uniqueFilePaths);
-          
-        }
+  
+    });
+  
 
-        setDragging(false);
-      });
 
-      return () => {
-        unlisten.then((fn) => fn());
-      };
-    }, [fileNames]); // Add fileNames as a dependency
+    return () => {
+      unlisten.then((fn) => fn());
+    };
+  }, [deletingCount, isOverDropZone, fileNames]); // Add fileNames as a dependency
 
   return (
-    <div
-      className="file-container"
-    >
+    <div className={`file-container ${uploadCount > 0 ? 'uploading' : ''}`}>
       <h1 id="file-title">easiDocs</h1>
-      <FileListComponent files={fileNames} onRemoveFile={onRemoveFile} />
-        <div
-          className={`dropZone ${dragging ? 'dragging' : ''}`}
-          onDragOver={(e) => dragOver(e)}
-          onDragLeave={(e) => dragLeave(e)}>
-          DROP FILES
+      {uploadCount > 0 && (
+        <div className="uploading-text" style={{ color: "white" }}>
+          <label>Uploading</label>
+          <label> Please wait...</label>
+          </div>
+      )}
+      <div
+        className={`file-container-zone ${uploadCount > 0 ? 'uploading' : ''} `}
+      >
+  <FileListComponent files={fileNames} onRemoveFile={onRemoveFile} deletingFiles={deletingFiles} /> 
+   <div
+          className={`dropZone ${deletingCount > 0 ? 'deleting' : ''} ${isOverDropZone ? 'over' : ''}`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          >
+          {deletingCount > 0 ? "WAIT FOR DELETION TO COMPLETE" : "DROP ZONE"}
         </div>
       </div>
+    </div>
 
   );
 }

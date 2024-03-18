@@ -66,12 +66,11 @@ async fn load_documents_to_db(paths: Vec<String>) -> PyResult<()> {
 }
 
 
-
-
-
 async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
     let documents_store_dir = "../../backend/pdf";
     println!("Received file paths: {:?}", paths.file_paths);
+
+    let mut successful_copies = Vec::new();
 
     for path in &paths.file_paths {
         let file_name = Path::new(path).file_name().unwrap();
@@ -81,18 +80,7 @@ async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
             match fs::copy(path, &destination) {
                 Ok(_) => {
                     println!("Successfully copied {} to {}", path, destination);
-
-                    // Clone only the file paths for Python processing
-                    let cloned_paths = paths.file_paths.clone();
-                    println!("");
-
-                    match load_documents_to_db(cloned_paths).await {
-                        Ok(_) => {
-                            println!("Successfully loaded documents to the database with the file paths: {:?}", paths.file_paths);  
-                            println!("");   
-                        },
-                        Err(e) => eprintln!("Failed to load documents to the database: {:?}", e),
-                    }
+                    successful_copies.push(destination);
                 },
                 Err(e) => eprintln!("Failed to copy {} to {}: {}", path, destination, e),
             }
@@ -101,8 +89,16 @@ async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
         }
     }
 
-    HttpResponse::Ok().body("File paths received and files copied")
+    if !successful_copies.is_empty() { 
+        match load_documents_to_db(successful_copies.clone()).await {
+            Ok(_) => println!("Successfully loaded documents to the database: {:?}", successful_copies),
+            Err(e) => eprintln!("Failed to load documents to the database: {:?}", e),
+        }
+    }
+
+    HttpResponse::Ok().body("File paths received and files processed")
 }
+
 
 
 

@@ -41,12 +41,14 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
           console.log(response.data);
         } else {
           onSendMessage({ text: "Failed to send message: " + response.statusText, type: 'bot' });
+          setIsLoading(false);
           setMessage('');
         }
       })
       
       .catch(error => {
         onSendMessage({text : "Failed to send message, could not connect to server.", type: 'bot' });
+        setIsLoading(false);
         setMessage('');
         console.error(error);
       });
