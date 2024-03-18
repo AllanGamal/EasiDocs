@@ -13,11 +13,11 @@ from sys import stdin
 def load_document(file):
     
     new_documents = []
-    if (file.endswith(".docx") | file.endswith(".doc")):
+    if (file.endswith(".docx") or file.endswith(".doc")):
         new_documents =  UnstructuredWordDocumentLoader(file).load()
     if (file.endswith(".pdf")):
         new_documents = (PyPDFLoader(file).load())
-    if (file.endswith(".txt") | file.endswith(".md")):
+    if (file.endswith(".txt") or file.endswith(".md")):
         new_documents =  TextLoader(file).load()
     
     filename = os.path.basename(file)

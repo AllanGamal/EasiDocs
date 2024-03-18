@@ -66,9 +66,6 @@ async fn load_documents_to_db(paths: Vec<String>) -> PyResult<()> {
 }
 
 
-
-
-
 async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
     let documents_store_dir = "../../backend/pdf";
     println!("Received file paths: {:?}", paths.file_paths);
@@ -92,9 +89,9 @@ async fn handle_file_paths(paths: web::Json<FilePaths>) -> impl Responder {
         }
     }
 
-    if !successful_copies.is_empty() {
-        match load_documents_to_db(successful_copies).await {
-            Ok(_) => println!("Successfully loaded documents to the database."),
+    if !successful_copies.is_empty() { 
+        match load_documents_to_db(successful_copies.clone()).await {
+            Ok(_) => println!("Successfully loaded documents to the database: {:?}", successful_copies),
             Err(e) => eprintln!("Failed to load documents to the database: {:?}", e),
         }
     }
