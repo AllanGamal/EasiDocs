@@ -13,6 +13,7 @@
   padding: 20px;
 }
 .chat-input-container .chat-input-element-container {
+  position: relative;
   background-color: var(--secondary-background-color);
   max-width: 750px;
   width: 100%;
@@ -21,6 +22,32 @@
   justify-content: flex-end;
   align-items: center;
   margin: auto;
+}
+.chat-input-container .chat-input-element-container .language-container {
+  position: absolute;
+  right: 63px;
+  text-align: center;
+}
+.chat-input-container .chat-input-element-container .language-container .language-btn,
+.chat-input-container .chat-input-element-container .language-container .language-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.7em;
+  width: 75%;
+  border: none;
+}
+.chat-input-container .chat-input-element-container .language-container .language-btn:checked + .language-label {
+  background-color: var(--primary-background-color);
+}
+.chat-input-container .chat-input-element-container .language-container .language-btn:not(:checked) + .language-label {
+  background-color: var(--primary-background-color);
+}
+.chat-input-container .chat-input-element-container .language-container .language-btn:not(:checked) + .language-label:hover {
+  background-color: var(--primary-background-color-hover);
+}
+.chat-input-container .chat-input-element-container .language-container .language-btn:not(:checked) + .language-label:active {
+  background-color: black;
 }
 .chat-input-container .chat-input-element-container button {
   background-color: var(--primary-background-color);
