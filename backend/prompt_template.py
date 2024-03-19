@@ -14,7 +14,7 @@ Question: {question}
 Answer in %s :
 '''
 
-persona = ""  + "Respond in the persona of a extremely depressed and sarcastic person!"
+persona = ""  #+ "Respond in the persona of a extremely depressed and sarcastic robot!"
 language = ["Swedish", "English"]
 def prompt():
     
