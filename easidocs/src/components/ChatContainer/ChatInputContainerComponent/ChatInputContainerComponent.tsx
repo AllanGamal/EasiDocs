@@ -6,7 +6,7 @@ import { Message } from '../ChatHistoryContainerComponent/ChatHistoryContainerCo
 interface Props {
   // message and type 
   onSendMessage: (message: Message) => void;
-  
+
 }
 
 
@@ -19,40 +19,40 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
     setMessage(event.target.value);
   };
 
-  
-  
-  
+
+
+
   const handleSendClick = () => {
     const apiUrl = 'http://localhost:8001/message';
-    
-    
+
+
     if (message !== '') {
       setIsLoading(true);
       onSendMessage({ text: message, type: 'user' });
       setMessage('');
       axios.post(apiUrl, { message })
-      .then(response => {
-        setIsLoading(false);
-        if (response.status === 200) {
-          console.log('Message sent');
-          onSendMessage({ text: response.data, type: 'bot' });
-       
-      
-          console.log(response.data);
-        } else {
-          onSendMessage({ text: "Failed to send message: " + response.statusText, type: 'bot' });
+        .then(response => {
+          setIsLoading(false);
+          if (response.status === 200) {
+            console.log('Message sent');
+            onSendMessage({ text: response.data, type: 'bot' });
+
+
+            console.log(response.data);
+          } else {
+            onSendMessage({ text: "Failed to send message: " + response.statusText, type: 'bot' });
+            setIsLoading(false);
+            setMessage('');
+          }
+        })
+
+        .catch(error => {
+          onSendMessage({ text: "Failed to send message, could not connect to server.", type: 'bot' });
           setIsLoading(false);
           setMessage('');
-        }
-      })
-      
-      .catch(error => {
-        onSendMessage({text : "Failed to send message, could not connect to server.", type: 'bot' });
-        setIsLoading(false);
-        setMessage('');
-        console.error(error);
-      });
-      
+          console.error(error);
+        });
+
     }
   };
 
@@ -65,12 +65,18 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
           placeholder="Ask a question..."
           value={message}
           onChange={handleInputChange}
-          
+
         >
-          
+
         </input>
+        <div className="language-container">
+
+          <input type="checkbox" className="btn-check language-btn" id="btn-check" autoComplete="off">
+          </input>
+          <label className="btn btn-primary language-label" htmlFor="btn-check">SV</label>
+        </div>
         <button type="button" className="btn btn-primary" onClick={handleSendClick} disabled={isLoading}>
-        {isLoading ? '....' : 'Send'}
+          {isLoading ? '....' : 'Send'}
         </button>
       </div>
     </div>

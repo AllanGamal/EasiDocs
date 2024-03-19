@@ -5,8 +5,9 @@
     background-color: var(--secondary-background-color);
     width: 100%;
     padding: 20px;
-    
+
     .chat-input-element-container {
+        position: relative;
         background-color: var(--secondary-background-color);
         max-width: 750px;
         width: 100%;
@@ -16,6 +17,47 @@
         align-items: center;
         margin: auto;
 
+        .language-container {
+            position: absolute;
+            right: 63px;
+            text-align: center;
+
+            .language-btn,
+            .language-label {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 0.7em;
+                width: 75%;
+                border: none;
+
+            }
+
+
+            .language-btn {
+
+
+
+                &:checked+.language-label {
+                    background-color: var(--primary-background-color);
+
+                }
+
+                &:not(:checked)+.language-label {
+                    background-color: var(--primary-background-color);
+
+                    &:hover {
+                        background-color: var(--primary-background-color-hover);
+                    }
+
+                    &:active {
+                        background-color: black;
+                    }
+                }
+            }
+
+        }
+
         button {
             background-color: var(--primary-background-color);
             color: var(--primary-text-color);
@@ -24,6 +66,7 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
+
             &:hover {
                 background-color: var(--primary-background-color-hover);
             }
@@ -37,10 +80,10 @@
             }
         }
 
-        
+
 
         .chat-input {
-            
+
             flex-grow: 1;
             background-color: var(--secondary-background-color);
             width: 100%;
@@ -49,13 +92,13 @@
             border: 1px solid var(--secondary-background-color-hover);
             margin-right: 10px;
             color: var(--primary-text-color);
-            
+
 
             &:focus {
                 outline: none;
             }
 
-            
+
         }
-      }
-  }
+    }
+}
