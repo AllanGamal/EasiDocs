@@ -52,7 +52,7 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
         })
 
         .catch(error => {
-          onSendMessage({ text: "Failed to send message, could not connect to server.", type: 'bot', language: isEnglish});
+          onSendMessage({ text: "Failed to send message, could not connect to server.", type: 'bot'});
           setIsLoading(false);
           setMessage('');
           console.error(error);

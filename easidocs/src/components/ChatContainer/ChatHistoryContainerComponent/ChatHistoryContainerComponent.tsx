@@ -29,6 +29,7 @@ function ChatHistoryContainerComponent({ chatHistory }: Props) {
     <div className="chat-history-container">
       <ul className="chat-history-list list-group">
       <li className={`chat-user-container bot list-group-item`}>
+      <div className="item-container">
             <div className="chat-user-logo">
               <img src={rTwoodTwooLogo} className="App-logo" alt="logo" />
             </div>
@@ -38,15 +39,25 @@ function ChatHistoryContainerComponent({ chatHistory }: Props) {
               Ask me anything about your documents.</p>
               <p className="chat-history-textfield" style={{fontWeight: "1000"}}>Whistle-bleep!</p>
             </div>
+            </div>
           </li>
         {chatHistory && chatHistory.map((message, index) => (
           <li key={index} className={`chat-user-container ${message.type} list-group-item`}>
+            <div className="item-container">
+
             <div className="chat-user-logo">
               <img src={message.type === 'user' ? humanLogo : rTwoodTwooLogo} className="App-logo" alt="logo" />
             </div>
             <div className="chat-user">
               <p className="chat-history-textfield">{message.text}</p>
+              
             </div>
+            </div>
+            {message.type === "bot" ? <div className="source-links-container">
+              <a className="links" href="">Source</a>
+              <a className="links" href="">Source</a >
+              <a className="links" href="">Source</a>
+            </div>: null}
           </li>
         ))}
 
