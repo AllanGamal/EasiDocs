@@ -14,10 +14,15 @@ interface Props {
 function ChatInputContainerComponent({ onSendMessage }: Props) {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isEnglish, setIsEnglish] = useState(true);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
   };
+
+  const toggleLanguage = () => {
+    setIsEnglish(!isEnglish)
+  }
 
 
 
@@ -28,26 +33,26 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
 
     if (message !== '') {
       setIsLoading(true);
-      onSendMessage({ text: message, type: 'user' });
+      onSendMessage({ text: message, type: 'user'});
       setMessage('');
-      axios.post(apiUrl, { message })
+      axios.post(apiUrl, { message, is_english: isEnglish })
         .then(response => {
           setIsLoading(false);
           if (response.status === 200) {
             console.log('Message sent');
-            onSendMessage({ text: response.data, type: 'bot' });
+            onSendMessage({ text: response.data, type: 'bot'});
 
 
             console.log(response.data);
           } else {
-            onSendMessage({ text: "Failed to send message: " + response.statusText, type: 'bot' });
+            onSendMessage({ text: "Failed to send message: " + response.statusText, type: 'bot'});
             setIsLoading(false);
             setMessage('');
           }
         })
 
         .catch(error => {
-          onSendMessage({ text: "Failed to send message, could not connect to server.", type: 'bot' });
+          onSendMessage({ text: "Failed to send message, could not connect to server.", type: 'bot', language: isEnglish});
           setIsLoading(false);
           setMessage('');
           console.error(error);
@@ -71,9 +76,9 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
         </input>
         <div className="language-container">
 
-          <input type="checkbox" className="btn-check language-btn" id="btn-check" autoComplete="off">
+          <input type="checkbox" className="btn-check language-btn" id="btn-check" autoComplete="off" onClick={toggleLanguage}>
           </input>
-          <label className="btn btn-primary language-label" htmlFor="btn-check">SV</label>
+          <label className="btn btn-primary language-label" htmlFor="btn-check">{isEnglish ? "EN" : "SV"}</label>
         </div>
         <button type="button" className="btn btn-primary" onClick={handleSendClick} disabled={isLoading}>
           {isLoading ? '....' : 'Send'}

@@ -15,11 +15,13 @@ Answer in %s :
 '''
 
 persona = ""  #+ "Respond in the persona of a extremely depressed and sarcastic robot!"
-language = ["Swedish", "English"]
-def prompt():
+
+def prompt(languageBool):
+
+    language = set_language(languageBool)
     
     prompt = PromptTemplate(
-        template=template % (persona, language[1]),
+        template=template % (persona, language),
         input_variables=[
             'context', 
             'question'
@@ -28,4 +30,7 @@ def prompt():
     return prompt
 
 
-
+def set_language(bool):
+    if bool:
+        return "English"
+    return "Swedish"

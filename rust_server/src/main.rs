@@ -9,6 +9,7 @@ use std::path::Path;
 #[derive(Deserialize)]
 struct Message {
     message: String,
+    is_english: bool,
 }
 #[derive(Deserialize)]
 struct FilePaths {
@@ -22,10 +23,12 @@ struct FilePath {
 
 async fn handle_message(message: web::Json<Message>) -> impl Responder {
     println!("Received query: {}", message.message);
+    println!("Language: {}", message.is_english);
     let query = message.message.clone();
+    let is_english = message.is_english;
 
    
-    match execute_rag_query(query).await {
+    match execute_rag_query(query, is_english).await {
         Ok(result) => {
             HttpResponse::Ok().body(result) 
         }
@@ -36,13 +39,13 @@ async fn handle_message(message: web::Json<Message>) -> impl Responder {
     }
 }
 
-async fn execute_rag_query(query: String) -> PyResult<String> {
+async fn execute_rag_query(query: String, is_english: bool) -> PyResult<String> {
     Python::with_gil(|py| {
         let sys = PyModule::import(py, "sys").unwrap();
         sys.getattr("path").unwrap().call_method1("append", ("../../backend",)).unwrap();
         
         let python_script = PyModule::import(py, "RAG")?;
-        let result: String = python_script.call_method1("get_rag_response", (&query,))?.extract()?;
+        let result: String = python_script.call_method1("get_rag_response", (&query,is_english))?.extract()?;
         Ok(result) // result is the response fom llm
     })
 }
