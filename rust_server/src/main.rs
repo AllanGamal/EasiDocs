@@ -27,10 +27,9 @@ async fn handle_message(message: web::Json<Message>) -> impl Responder {
     let query = message.message.clone();
     let is_english = message.is_english;
 
-   
     match execute_rag_query(query, is_english).await {
-        Ok(result) => {
-            HttpResponse::Ok().body(result) 
+        Ok((answer, metadata)) => {
+            HttpResponse::Ok().json(serde_json::json!({ "answer": answer, "metadata": metadata }))
         }
         Err(e) => {
             eprintln!("Failed to execute Python function: {:?}", e);
@@ -39,14 +38,14 @@ async fn handle_message(message: web::Json<Message>) -> impl Responder {
     }
 }
 
-async fn execute_rag_query(query: String, is_english: bool) -> PyResult<String> {
+async fn execute_rag_query(query: String, is_english: bool) -> PyResult<(String, Vec<String>)> {
     Python::with_gil(|py| {
         let sys = PyModule::import(py, "sys").unwrap();
         sys.getattr("path").unwrap().call_method1("append", ("../../backend",)).unwrap();
         
         let python_script = PyModule::import(py, "RAG")?;
-        let result: String = python_script.call_method1("get_rag_response", (&query,is_english))?.extract()?;
-        Ok(result) // result is the response fom llm
+        let (answer, metadata): (String, Vec<String>) = python_script.call_method1("get_rag_response", (&query, is_english))?.extract()?;
+        Ok((answer, metadata))
     })
 }
 

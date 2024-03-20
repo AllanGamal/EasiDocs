@@ -8,6 +8,7 @@ import { useEffect, useRef } from "react";
 export interface Message {
   text: string;
   type: 'user' | 'bot';
+  source?: string[];
 }
 
 interface Props {
@@ -15,7 +16,7 @@ interface Props {
 }
 function ChatHistoryContainerComponent({ chatHistory }: Props) {
   const messagesEndRef = useRef<null | HTMLLIElement>(null);
-
+  console.log('Chat History:', chatHistory);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -53,11 +54,19 @@ function ChatHistoryContainerComponent({ chatHistory }: Props) {
               
             </div>
             </div>
-            {message.type === "bot" ? <div className="source-links-container">
-              <a className="links" href="">Source</a>
-              <a className="links" href="">Source</a >
-              <a className="links" href="">Source</a>
-            </div>: null}
+            {message.type === "bot" && message.source && message.source.length > 0 && (
+  <div className="source-links-container">
+    {message.type === "bot" && message.source && message.source.length > 0 ? (
+  <div className="source-links-container">
+    {message.source.map((link, idx) => (
+      <a key={idx} className="links" href={link} target="_blank" rel="noopener noreferrer">{link}</a>
+    ))}
+  </div>
+) : null}
+
+  </div>
+)}
+
           </li>
         ))}
 

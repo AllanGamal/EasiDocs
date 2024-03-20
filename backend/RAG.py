@@ -143,7 +143,7 @@ def get_rag_response(query, languageBool):
     embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
     db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
 
-    retriever = db.as_retriever(search_kwargs={"k": 4}) # k=3 => 3 sources
+    retriever = db.as_retriever(search_kwargs={"k": 3}) # k=3 => 4 sources
     llm = Ollama(model="mistral")
     
     start = time.time()
@@ -166,7 +166,12 @@ def get_rag_response(query, languageBool):
     print("ANSWER")
     print(answer)
     print("SOURCES")
+    metadata = []
     for source in sources:
         print(source)
+        print("")
+        dataString =  source.metadata.get('source') + ", " + "p." + str(source.metadata.get('page'))
+        metadata.append(dataString)
+    print(metadata)
     
-    return answer
+    return answer, metadata

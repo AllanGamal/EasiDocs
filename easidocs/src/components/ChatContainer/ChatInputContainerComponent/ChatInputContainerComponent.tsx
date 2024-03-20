@@ -40,10 +40,14 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
           setIsLoading(false);
           if (response.status === 200) {
             console.log('Message sent');
-            onSendMessage({ text: response.data, type: 'bot'});
+            // go ghrough the source list and print out the source
+            console.log("test")
+            console.log(response.data.metadata);
 
 
+            onSendMessage({ text: response.data.answer, type: 'bot', source: response.data.metadata });
             console.log(response.data);
+            
           } else {
             onSendMessage({ text: "Failed to send message: " + response.statusText, type: 'bot'});
             setIsLoading(false);
