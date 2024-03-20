@@ -131,7 +131,7 @@ def load_documents_to_db(file_paths_arr):
         )
 
 
-def get_rag_response(query):
+def get_rag_response(query, languageBool):
     print("Getting RAG response...")
 
     # save in chromadb folder
@@ -147,7 +147,7 @@ def get_rag_response(query):
     llm = Ollama(model="mistral")
     
     start = time.time()
-    prompt = prompty()
+    prompt = prompty(languageBool)
     start = time.time()
     qa = RetrievalQA.from_chain_type(
         llm=llm,
