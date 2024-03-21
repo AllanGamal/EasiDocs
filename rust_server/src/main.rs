@@ -24,12 +24,14 @@ struct FilePath {
 async fn handle_message(message: web::Json<Message>) -> impl Responder {
     println!("Received query: {}", message.message);
     println!("Language: {}", message.is_english);
+    
     let query = message.message.clone();
     let is_english = message.is_english;
 
     match execute_rag_query(query, is_english).await {
-        Ok((answer, metadata)) => {
-            HttpResponse::Ok().json(serde_json::json!({ "answer": answer, "metadata": metadata }))
+        Ok((answer, metadata, page_contents)) => {
+            println!("Answer: {}", page_contents.join(", "));
+            HttpResponse::Ok().json(serde_json::json!({ "answer": answer, "metadata": metadata, "pageContents": page_contents}))
         }
         Err(e) => {
             eprintln!("Failed to execute Python function: {:?}", e);
@@ -38,14 +40,14 @@ async fn handle_message(message: web::Json<Message>) -> impl Responder {
     }
 }
 
-async fn execute_rag_query(query: String, is_english: bool) -> PyResult<(String, Vec<String>)> {
+async fn execute_rag_query(query: String, is_english: bool) -> PyResult<(String, Vec<String>, Vec<String>)> {
     Python::with_gil(|py| {
         let sys = PyModule::import(py, "sys").unwrap();
         sys.getattr("path").unwrap().call_method1("append", ("../../backend",)).unwrap();
         
         let python_script = PyModule::import(py, "RAG")?;
-        let (answer, metadata): (String, Vec<String>) = python_script.call_method1("get_rag_response", (&query, is_english))?.extract()?;
-        Ok((answer, metadata))
+        let (answer, metadata, page_contents): (String, Vec<String>, Vec<String>) = python_script.call_method1("get_rag_response", (&query, is_english))?.extract()?;
+        Ok((answer, metadata, page_contents))
     })
 }
 

@@ -1,0 +1,50 @@
+.modal-main {
+  background-color: var(--secondary-background-color);
+  color: var(--primary-text-color);
+  width: 100%;
+  min-height: 20px;
+  max-height: 90%;
+  max-width: 900px;
+  margin: 0 30px;
+  padding: 30px;
+  border-radius: 5px;
+  overflow-y: scroll;
+}
+.modal-main h2 {
+  color: var(--primary-text-color);
+  font-size: 1.5em;
+  padding: 2px;
+  padding-bottom: 15px;
+  white-space: nowrap;
+}
+.modal-main p {
+  color: var(--primary-text-color);
+  font-size: 1em;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  padding: 2px;
+  margin-bottom: 5px;
+}
+.modal-main .button-title-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.ReactModal {
+  background-color: red;
+}
+.ReactModal__Overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.ReactModal__Overlay__Content {
+  position: relative;
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  width: 80%;
+  max-width: 800px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}/*# sourceMappingURL=PageContentModal.css.map */

@@ -22,8 +22,6 @@
         background: #111010; 
     }
 
-    
-
     .chat-history-list {
         background-color: var(--secondary-background-color);
         width: 100%;
@@ -53,6 +51,8 @@
             align-items: center;
             padding: 10px;
             border: none;
+            letter-spacing: 0.6px;
+            font-weight: 500;
             }
 
             .source-links-container {
@@ -67,14 +67,14 @@
                 margin-top: -7px;
 
                 .links {
-                    padding-left: 10px;
-                    font-size: 0.85em;
+                    padding-left: 12px;
+                    font-size: 0.8em;
                     text-decoration: none;
-                    color: rgb(44, 187, 187);
+                    color: rgb(43, 138, 170);
                     
                     &:hover {
                         color: rgba(44, 187, 187, 0.582);
-
+                        cursor: pointer;
                     }
                 }
             }

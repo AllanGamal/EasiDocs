@@ -53,6 +53,8 @@
   align-items: center;
   padding: 10px;
   border: none;
+  letter-spacing: 0.6px;
+  font-weight: 500;
 }
 .chat-history-container .chat-history-list .chat-user-container .source-links-container {
   display: flex;
@@ -66,13 +68,14 @@
   margin-top: -7px;
 }
 .chat-history-container .chat-history-list .chat-user-container .source-links-container .links {
-  padding-left: 10px;
-  font-size: 0.85em;
+  padding-left: 12px;
+  font-size: 0.8em;
   text-decoration: none;
-  color: rgb(44, 187, 187);
+  color: rgb(43, 138, 170);
 }
 .chat-history-container .chat-history-list .chat-user-container .source-links-container .links:hover {
   color: rgba(44, 187, 187, 0.582);
+  cursor: pointer;
 }
 .chat-history-container .chat-history-list .chat-user-container.user {
   background-color: var(--secondary-background-color);

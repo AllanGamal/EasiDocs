@@ -42,10 +42,21 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
             console.log('Message sent');
             // go ghrough the source list and print out the source
             console.log("test")
-            console.log(response.data.metadata);
+            console.log(response.data.answer);
+            console.log(response.data.pageContents);
+            let newMetadata = response.data.metadata;
+            let newPageContents = response.data.pageContents;
+            
+            // go through the pageContents list and check if there is less that 100 characters
+            for (let i = 0; i < newPageContents.length; i++) {
+              if (response.data.pageContents[i].length < 100) {
+                newPageContents.splice(i, 1);
+                newMetadata.splice(i, 1);
+                i--;
+              }
+            }
 
-
-            onSendMessage({ text: response.data.answer, type: 'bot', source: response.data.metadata });
+            onSendMessage({ text: response.data.answer, type: 'bot', metadata: newMetadata, pageContents: newPageContents});
             console.log(response.data);
             
           } else {
@@ -74,17 +85,22 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
           placeholder="Ask a question..."
           value={message}
           onChange={handleInputChange}
+          onKeyPress={(event) => {
+            if (event.key === 'Enter') {
+              handleSendClick();
+            }
+          }}
 
         >
 
         </input>
         <div className="language-container">
 
-          <input type="checkbox" className="btn-check language-btn" id="btn-check" autoComplete="off" onClick={toggleLanguage}>
+          <input type="checkbox" className="btn-check language-btn" id="btn-check" autoComplete="off" onClick={toggleLanguage} >
           </input>
           <label className="btn btn-primary language-label" htmlFor="btn-check">{isEnglish ? "EN" : "SV"}</label>
         </div>
-        <button type="button" className="btn btn-primary" onClick={handleSendClick} disabled={isLoading}>
+        <button type="button" className="btn btn-primary" onClick={handleSendClick} disabled={isLoading} >
           {isLoading ? '....' : 'Send'}
         </button>
       </div>
