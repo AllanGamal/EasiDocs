@@ -11,7 +11,7 @@ Never quote sources.
 %s
 
 Question: {question}
-Answer in %s :
+Answer, based on the context, in %s :
 '''
 
 persona = ""  #+ "Respond in the persona of a extremely depressed and sarcastic robot!"

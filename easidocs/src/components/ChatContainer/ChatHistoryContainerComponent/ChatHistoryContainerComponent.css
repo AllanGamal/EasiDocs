@@ -38,13 +38,44 @@
   width: 100%;
   max-width: 850px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: flex-end;
   align-items: center;
   padding: 10px;
   border: none;
   border-top: 1px solid var(--secondary-background-color-hover);
   border-bottom: 1px solid var(--secondary-background-color-hover);
+}
+.chat-history-container .chat-history-list .chat-user-container .item-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
+  border: none;
+  letter-spacing: 0.6px;
+  font-weight: 500;
+}
+.chat-history-container .chat-history-list .chat-user-container .source-links-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
+  padding: -10px;
+  padding-left: 10px;
+  border: none;
+  margin-right: 10px;
+  margin-top: -7px;
+}
+.chat-history-container .chat-history-list .chat-user-container .source-links-container .links {
+  padding-left: 12px;
+  font-size: 0.8em;
+  text-decoration: none;
+  color: rgb(43, 138, 170);
+}
+.chat-history-container .chat-history-list .chat-user-container .source-links-container .links:hover {
+  color: rgba(44, 187, 187, 0.582);
+  cursor: pointer;
 }
 .chat-history-container .chat-history-list .chat-user-container.user {
   background-color: var(--secondary-background-color);
