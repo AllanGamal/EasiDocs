@@ -34,3 +34,4 @@ def set_language(bool):
     if bool:
         return "English"
     return "Swedish"
+

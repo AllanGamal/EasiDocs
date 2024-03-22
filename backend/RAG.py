@@ -181,3 +181,15 @@ def get_rag_response(query, languageBool):
     print(answer)
     
     return answer, metadata, page_contents
+
+
+json = {
+  "goal": "Specific Goal",
+  "query": "Initial Question based on Goal",
+  "answers": [
+    {"text": "Answer 1.1", "cl": 0.1},
+    {"text": "Answer 1.2", "cl": 0.7},
+    {"text": "Answer 1.3", "cl": 0.2},
+    {"text": "Answer 1.4", "cl": 0.3},
+  ]
+}
