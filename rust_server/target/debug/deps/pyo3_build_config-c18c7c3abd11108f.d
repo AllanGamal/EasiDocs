@@ -1,0 +1,14 @@
+/Users/allangamal/Documents/GitHub/EasiDocs/rust_server/target/debug/deps/libpyo3_build_config-c18c7c3abd11108f.rmeta: /Users/allangamal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pyo3-build-config-0.20.3/src/lib.rs /Users/allangamal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pyo3-build-config-0.20.3/src/errors.rs /Users/allangamal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pyo3-build-config-0.20.3/src/impl_.rs /Users/allangamal/Documents/GitHub/EasiDocs/rust_server/target/debug/build/pyo3-build-config-1f3f3e334ad456bc/out/pyo3-build-config-file.txt /Users/allangamal/Documents/GitHub/EasiDocs/rust_server/target/debug/build/pyo3-build-config-1f3f3e334ad456bc/out/pyo3-build-config.txt
+
+/Users/allangamal/Documents/GitHub/EasiDocs/rust_server/target/debug/deps/libpyo3_build_config-c18c7c3abd11108f.rlib: /Users/allangamal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pyo3-build-config-0.20.3/src/lib.rs /Users/allangamal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pyo3-build-config-0.20.3/src/errors.rs /Users/allangamal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pyo3-build-config-0.20.3/src/impl_.rs /Users/allangamal/Documents/GitHub/EasiDocs/rust_server/target/debug/build/pyo3-build-config-1f3f3e334ad456bc/out/pyo3-build-config-file.txt /Users/allangamal/Documents/GitHub/EasiDocs/rust_server/target/debug/build/pyo3-build-config-1f3f3e334ad456bc/out/pyo3-build-config.txt
+
+/Users/allangamal/Documents/GitHub/EasiDocs/rust_server/target/debug/deps/pyo3_build_config-c18c7c3abd11108f.d: /Users/allangamal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pyo3-build-config-0.20.3/src/lib.rs /Users/allangamal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pyo3-build-config-0.20.3/src/errors.rs /Users/allangamal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pyo3-build-config-0.20.3/src/impl_.rs /Users/allangamal/Documents/GitHub/EasiDocs/rust_server/target/debug/build/pyo3-build-config-1f3f3e334ad456bc/out/pyo3-build-config-file.txt /Users/allangamal/Documents/GitHub/EasiDocs/rust_server/target/debug/build/pyo3-build-config-1f3f3e334ad456bc/out/pyo3-build-config.txt
+
+/Users/allangamal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pyo3-build-config-0.20.3/src/lib.rs:
+/Users/allangamal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pyo3-build-config-0.20.3/src/errors.rs:
+/Users/allangamal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pyo3-build-config-0.20.3/src/impl_.rs:
+/Users/allangamal/Documents/GitHub/EasiDocs/rust_server/target/debug/build/pyo3-build-config-1f3f3e334ad456bc/out/pyo3-build-config-file.txt:
+/Users/allangamal/Documents/GitHub/EasiDocs/rust_server/target/debug/build/pyo3-build-config-1f3f3e334ad456bc/out/pyo3-build-config.txt:
+
+# env-dep:CARGO_PKG_VERSION=0.20.3
+# env-dep:OUT_DIR=/Users/allangamal/Documents/GitHub/EasiDocs/rust_server/target/debug/build/pyo3-build-config-1f3f3e334ad456bc/out
