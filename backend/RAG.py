@@ -124,14 +124,24 @@ def load_documents_to_db(file_paths_arr):
     embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
     '''
     '''
-    db = Chroma.from_documents(
+    Chroma.from_documents(
             documents,
             embedding_function,
             persist_directory=vector_dir, # save in chromadb folder
         )
 
 
+
+
+
 def get_rag_response(query, languageBool):
+
+    eval = False
+    if eval:
+        write_rag_results()
+        return
+    
+    
     print("Getting RAG response...")
 
     # save in chromadb folder
@@ -143,12 +153,10 @@ def get_rag_response(query, languageBool):
     embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
     db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
 
-    retriever = db.as_retriever(search_kwargs={"k": 5}) # k=3 => 4 sources
+    retriever = db.as_retriever(search_kwargs={"k": 4}) # k=3 => 4 sources
     llm = Ollama(model="mistral")
     
-    start = time.time()
     prompt = prompty(languageBool)
-    start = time.time()
     qa = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type="stuff", 
@@ -156,13 +164,12 @@ def get_rag_response(query, languageBool):
         return_source_documents=True,
         chain_type_kwargs={"prompt": prompt}
     )
-    query2_en = "Have AR or VR revealed any potential in the education sector?"
     result = qa.invoke(query)
     answer = result["result"]
     sources = result["source_documents"]
     end = time.time()
     print("-----------------------------------------------------------------------------------------------------------------------")
-    print("Time elapsed: ", end - start)
+    print(query)
     print("ANSWER")
     print(answer)
     print("SOURCES")
@@ -179,5 +186,103 @@ def get_rag_response(query, languageBool):
     print(pageContents)
     page_contents = pageContents
     print(answer)
+
+
+
+    return answer, metadata, page_contents
+    
+
+    
+    
+
+
+evalQuestions = [
+    "How can one gain better control over my emotions?",
+    "How can I increase my productivity?",
+    "How can I enhance my focus?",
+    "Why is continuous learning important for personal development?",
+    "How can one overcome the fear of failure?",
+    "What routines can I do to improve my mental health?",
+    "What are the key factors in building successful business partnerships?",
+    "How do you identify the right business partner for a startup?",
+    "How do I get happier?",
+    "How can setting personal goals contribute to a sense of fulfillment?",
+    "What are the biggest challenges in establishing partnerships?",
+    "How can one find a balance between work and free time to maximize happiness?",
+    "How do I find a life partner?",
+    "What habits should I form to be happier?",
+    "What habits should I avoid?",
+    "How do I form a new habit?",
+    "How should I raise my kids?",
+    "How do I break a bad habit?",
+    "How do I enhance my learning capabilities?",
+    "What are some good techniques for learning?",
+]
+
+
+
+import csv
+
+def get_rag_response2(query, languageBool):
+    print("Getting RAG response...")
+
+    # save in chromadb folder
+    vector_dir = "../../backend/chromadb/VectorStore" # from server dir
+    #vector_dir = "chromadb" # running from this file
+
+    import time
+    # initialize the vector store/db
+    embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
+    db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
+
+    retriever = db.as_retriever(search_kwargs={"k": 4}) # k=3 => 4 sources
+    llm = Ollama(model="qwen:14b")
+    
+    prompt = prompty(languageBool)
+    qa = RetrievalQA.from_chain_type(
+        llm=llm,
+        chain_type="stuff", 
+        retriever=retriever, # 3 sources
+        return_source_documents=True,
+        chain_type_kwargs={"prompt": prompt}
+    )
+    result = qa.invoke(query)
+    answer = result["result"]
+    sources = result["source_documents"]
+    
+    print("-----------------------------------------------------------------------------------------------------------------------")
+    print(query)
+    print("ANSWER")
+    print(answer)
+    print("SOURCES")
+    metadata = []
+    pageContents = []
+    for source in sources:
+        print("")
+        print("Source: ", source.metadata.get('source'))
+        dataString =  source.metadata.get('source') + ", " + "p." + str(source.metadata.get('page'))
+        pageContent = source.page_content
+        pageContents.append(pageContent)
+        metadata.append(dataString)
+    print(metadata)
+    page_contents = pageContents
     
     return answer, metadata, page_contents
+
+
+def write_rag_results():
+    # open CSV file for writing
+    with open('rag_results.csv', 'w', newline='') as csvfile:
+        # create a CSV writer
+        csvwriter = csv.writer(csvfile)
+
+        # write header row
+        csvwriter.writerow(['Question', 'Answer', 'Page Contents', 'Metadata'])
+
+        # iterate over eval questions
+        for question in evalQuestions:
+            # get RAG response
+            answer, metadata, page_contents = get_rag_response2(question, True)
+
+            # question, answer, page contents, and metadata to CSV file
+            csvwriter.writerow([question, answer, page_contents, metadata])
