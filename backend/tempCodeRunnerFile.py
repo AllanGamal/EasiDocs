@@ -1,0 +1,1 @@
+Answer ONLY with a confidence level float between 0.0 and 1.0. You are not allowed to answer with anything other than a float

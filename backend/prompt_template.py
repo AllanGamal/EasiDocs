@@ -3,15 +3,16 @@ from langchain.prompts import PromptTemplate
 
 
 template = '''
-If you don't know the answer, just say that you don't know.
-Don't try to make up an answer. Answer ONLY in whatever language you get the question in.
 Never quote sources.
+Question: '{question}'
+Context:
+'
 {context}
-
+'
 %s
 
-Question: {question}
-Make a detailed answer, and as much details as possible that is based on the context, in %s :
+Make a detailed answer, based on the context, in %s. 
+If there is no direct, obvious or clear connection between the context and the question, say clearly and then bring up and state 1 potential connections between the context and the question, even if it is somewhat far stretched anv vague. Be creative and explore potential links!
 '''
 
 persona = ""  #+ "Respond in the persona of a extremely depressed and sarcastic robot!"

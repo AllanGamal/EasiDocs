@@ -131,17 +131,13 @@ def load_documents_to_db(file_paths_arr):
         )
 
 
-
-
-
 def get_rag_response(query, languageBool):
 
     eval = False
     if eval:
         write_rag_results()
         return
-    
-    
+
     print("Getting RAG response...")
 
     # save in chromadb folder
@@ -154,7 +150,8 @@ def get_rag_response(query, languageBool):
     db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
 
     retriever = db.as_retriever(search_kwargs={"k": 4}) # k=3 => 4 sources
-    llm = Ollama(model="mistral")
+    #gemma:7b-instruct-v1.1-q8_0
+    llm = Ollama(model="gemma")
     
     prompt = prompty(languageBool)
     qa = RetrievalQA.from_chain_type(
