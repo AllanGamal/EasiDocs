@@ -45,8 +45,8 @@ async fn execute_rag_query(query: String, is_english: bool) -> PyResult<(String,
         let sys = PyModule::import(py, "sys").unwrap();
         sys.getattr("path").unwrap().call_method1("append", ("../../backend",)).unwrap();
         
-        let python_script = PyModule::import(py, "RAG")?;
-        let (answer, metadata, page_contents): (String, Vec<String>, Vec<String>) = python_script.call_method1("get_rag_response", (&query, is_english))?.extract()?;
+        let python_script = PyModule::import(py, "qStar")?;
+        let (answer, metadata, page_contents): (String, Vec<String>, Vec<String>) = python_script.call_method1("root_qStar", (&query, ""))?.extract()?;
         Ok((answer, metadata, page_contents))
     })
 }
