@@ -8,6 +8,8 @@ prompt_template = "Based on the goal of {goal}, what question would you ask to g
 
 
 class Node:
+    top_10_nodes = []
+    previous_questions = []
     def __init__(self, question, context, confidence, level, parent=None):
         self.question = question
         self.context = context
@@ -16,10 +18,7 @@ class Node:
         self.parent = parent
         self.children = []
 
-    
-
     def add_child(self, question, context, confidence):
-        # Create a new node with level incremented by 1
         child_node = Node(question, context, confidence, self.level + 1, self)
         self.children.append(child_node)
         return child_node
@@ -72,31 +71,39 @@ class Node:
                 Node.top_10_nodes.append(node)
         
         Node.top_10_nodes = sorted(Node.top_10_nodes, key=lambda node: node.confidence, reverse=True) # sort the list (desc)
+
+    @staticmethod
+    def add_to_previous_questions(question):
+        Node.previous_questions.append(question)
+
+    @staticmethod
+    def get_previous_questions():
+        return Node.previous_questions
+
+
     
     
-def generate_new_query(goal, context):
-    prompt = f"With the objective in mind on the mind: {goal}, what question about the context do you think would answer the objective? Context: {context}.  Dont use any questions that is too similar to the previous questions {previous_questions}. You have to answer in a question format. The question should be super short and super concise, and relevant to the context and objective. Remember, keep it short"
+    
+def generate_new_query(goal, node):
+    prompt = f"With the objective in mind on the mind: {goal}, what question about the context do you think would answer the objective? Context: {node.get_context}. Dont use any questions that is too similar to the previous questions. Previous questions: '{Node.get_previous_questions}'. You have to answer in a question format. The question should be super short and super concise, and relevant to the context and objective. Remember, keep it short"
     llm = Ollama(model="gemma")
     new_query = llm.invoke(prompt)
     return new_query
 
-def generate_new_queries(goal, context, number_of_queries=3):
+def generate_new_queries(goal, node, number_of_queries=2):
     new_queries = []
     for i in range(number_of_queries):
-        query = generate_new_query(goal, context)
+        query = generate_new_query(goal, node)
         new_queries.append(query)
-        previous_questions.append(query)
+        Node.add_to_previous_questions(query)
     print(new_queries)
     return new_queries
-
-#generate_new_queries("how do i get a wife?", "Based on the context provided, it appears you are looking for areas of aptitude and interest that could potentially lead to forming a meaningful relationship or finding a partner. While I cannot directly answer this question with a specific list due to its subjective nature, I can suggest some possible directions based on the text's emphasis on natural ability and deep personal interest. 1. Communication: Having excellent verbal and written communication skills is essential for building strong relationships. Being able to express your thoughts, feelings, and ideas effectively is crucial in forming meaningful connections with others. 2. Emotional Intelligence: The ability to understand and manage your own emotions, as well as those of others, is key to fostering healthy relationships. Empathy, compassion, and emotional resilience are essential qualities for building strong bonds with a partner. 3. Social Skills: Being outgoing, friendly, and able to connect with various types of people can increase your chances of meeting potential partners in different social settings. Having a wide circle of friends and acquaintances opens up more opportunities for forming romantic relationships. 4. Shared Interests: Pursuing activities that align with your personal interests and passions can lead you to meet like-minded individuals who may share similar values and goals. Joining clubs, attending workshops, or participating in events related to your interests can provide valuable opportunities to connect with potential partners. 5. Intellectual Curiosity: Being open-minded and curious about various topics can help broaden your horizons and increase the chances of meeting diverse individuals. Engaging in intellectual pursuits and engaging in thoughtful discussions with others can lead to deeper connections. 6. Emotional Resilience: The ability to bounce back from challenges, setbacks, and heartbreaks is vital for maintaining a healthy perspective on relationships. Developing emotional resilience through self-care practices, mindfulness, or therapy can help you navigate the ups and downs of romantic connections more effectively. 7. Cultural Sensitivity: Having an appreciation for diverse backgrounds, beliefs, and experiences can help you form meaningful connections with people from various cultural backgrounds. Being open to learning about different customs, traditions, and perspectives can lead to stronger bonds and deeper understanding.")
-
 
 
 def evaluate_confidence_level(goal, context):
     prompt = f'''Based on the goal of {goal}, how confident are you that this context is relevant to the goal? Context: {context}. 
-    Answer ONLY with a confidence level float between 0.0 and 1.0. 0 being not confident at all that the context is relevant to the goal, and 1 being extremely confident that the context is relevant to the goal.
-    You are not allowed to answer with anything other than a float. Please ONLY answer in a float format. For example, '0.5' or '0.75'. The string needs to be made to a float, so it is important that you only answer with a float and nothing else.'''
+    Respond solely with a confidence level as a float between 0.0 and 1.0, where 0.0 indicates no confidence and 1.0 indicates complete confidence in the context's relevance to the goal. 
+    Your answer must strictly be a numerical float, e.g., '0.5', '0.75'. Do not include any text or other characters.'''
     llm = Ollama(model="gemma")
     confidence_level = float(llm.invoke(prompt))
     print(f"Goal: {goal}")
@@ -104,12 +111,6 @@ def evaluate_confidence_level(goal, context):
     print(f"Confidence level: {confidence_level}")
     print("")
     return confidence_level
-
-#evaluate_confidence_level("how do i get a wife?", '''The provided text does not contain any direct or obvious information regarding finding a wife, so there is no direct connection between the context and the question.
-
-#**Potential connection:**
-
-#The text suggests that successful startup founders tend to be good people, implying that finding a partner who shares similar values and principles may be important for achieving success in work and life. This connection is somewhat far-fetched and does not provide specific guidance on how to find a wife.''')  
 
 def root_qStar(goal, context):
     root_node = Node(goal, context, 0, 0)
@@ -123,28 +124,27 @@ def qStar(current_node, goal, depth_limit=10):
     
     print(f"Exploring from node: {current_node.get_level()} {current_node.question} with confidence {current_node.confidence}")
 
-    # Proceed if there are child nodes generated
+    # explore child
     result = explore_child_nodes(current_node, goal, depth_limit)
     if result:
         print(f"Goal reached at level {result.get_level()}")
         return result
                 
-            
-    # If no child is valid and the node has siblings, iterate over siblings with the next highest confidence
+    # no child valid => iterate over highest confidence leveled siblings
     result = handle_sibling_nodes(current_node, goal, depth_limit)
     if result:
         print(f"Goal reached at level {result.get_level()}")
         return result
 
-    # Return None if no progress can be made
+    # 
     return None
 
 def explore_child_nodes(current_node, goal, depth_limit):
     child_nodes = generate_child_nodes(current_node, goal)
     if child_nodes:
-        # Sort children by confidence in descending order
+        # sort children
         sorted_children = sorted(child_nodes, key=lambda node: node.confidence, reverse=True)
-        if sorted_children[0].is_goal_reached():
+        if sorted_children[0].is_goal_reached(): # answer found 
             return sorted_children[0]
         for child in sorted_children:
             if child.confidence > current_node.confidence * 0.9: 
