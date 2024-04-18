@@ -16,11 +16,14 @@ class Node:
         self.parent = parent
         self.children = []
 
+    
+
     def add_child(self, question, context, confidence):
         # Create a new node with level incremented by 1
         child_node = Node(question, context, confidence, self.level + 1, self)
         self.children.append(child_node)
         return child_node
+        
 
     def get_children(self):
         return self.children
@@ -47,7 +50,7 @@ class Node:
         while node:
             ancestors.append(node)
             node = node.parent
-        return ancestors[::-1]  # Reverse to start from the root
+        return ancestors[::-1]  
     
     def display_ancestry(self):
         ancestry = self.get_ancestors()
@@ -56,6 +59,19 @@ class Node:
     
     def get_level(self):
         return self.level
+    
+    @staticmethod
+    def update_top_10_nodes(node):
+        if len(Node.top_10_nodes) < 10:
+            Node.top_10_nodes.append(node) 
+        else:
+            min_confidence_node = min(Node.top_10_nodes, key=lambda node: node.confidence)
+            if node.confidence > min_confidence_node.confidence:
+                # node with higher confidence => replace node with lowest confidence
+                Node.top_10_nodes.remove(min_confidence_node)
+                Node.top_10_nodes.append(node)
+        
+        Node.top_10_nodes = sorted(Node.top_10_nodes, key=lambda node: node.confidence, reverse=True) # sort the list (desc)
     
     
 def generate_new_query(goal, context):
@@ -128,26 +144,14 @@ def explore_child_nodes(current_node, goal, depth_limit):
     if child_nodes:
         # Sort children by confidence in descending order
         sorted_children = sorted(child_nodes, key=lambda node: node.confidence, reverse=True)
+        if sorted_children[0].is_goal_reached():
+            return sorted_children[0]
         for child in sorted_children:
-            if child.confidence > current_node.confidence * 0.9:
+            if child.confidence > current_node.confidence * 0.9: 
                 result = qStar(child, goal, depth_limit - 1)
                 if result and result.is_goal_reached():
                     return result
     return None
-
-
-def handle_sibling_nodes(current_node, goal, depth_limit):
-    if current_node.parent:
-        siblings = [sib for sib in current_node.parent.children if sib != current_node]
-        sorted_siblings = sorted(siblings, key=lambda node: node.confidence, reverse=True)
-        for sibling in sorted_siblings:
-            if sibling.confidence > current_node.confidence * 0.9:
-                result = qStar(sibling, goal, depth_limit - 1)
-                if result and result.is_goal_reached():
-                    return result
-    return None
-
-
 
 def generate_child_nodes(current_node, goal):
     new_queries = generate_new_queries(goal, current_node.get_context())
@@ -156,7 +160,22 @@ def generate_child_nodes(current_node, goal):
         query_result, metadata, contexts = rag_qstar(query, languageBool=True)
         for context in contexts:
             confidence = evaluate_confidence_level(goal, context)
+            if confidence < 0.15:
+                continue
             child_node = current_node.add_child(query, context, confidence)
             child_nodes.append(child_node)
+            Node.update_top_10_nodes(child_node) 
     return child_nodes
+
+
+def handle_sibling_nodes(current_node, goal, depth_limit):
+    if current_node.parent: 
+        siblings = [sib for sib in current_node.parent.children if sib != current_node] # 
+        sorted_siblings = sorted(siblings, key=lambda node: node.confidence, reverse=True)
+        for sibling in sorted_siblings:
+            result = qStar(sibling, goal, depth_limit - 1)
+            if result and result.is_goal_reached():
+                return result
+    return None
+
 
