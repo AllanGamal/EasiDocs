@@ -1,5 +1,6 @@
 
 from langchain_community.llms import Ollama
+from langchain_community.chat_models import ChatOllama
 from RAG import rag_qstar
 previous_questions = []
 goal_reached = False
@@ -28,7 +29,7 @@ class Node:
         return self.children
     
     def get_context(self):
-        return self.context
+        return str(self.context)
     
     def get_confidence(self):
         return self.confidence
@@ -82,8 +83,6 @@ class Node:
 
 
     
-    
-    
 def generate_new_query(goal, node):
     prompt = f"With the objective in mind on the mind: {goal}, what question about the context do you think would answer the objective? Context: {node.get_context}. Dont use any questions that is too similar to the previous questions. Previous questions: '{Node.get_previous_questions}'. You have to answer in a question format. The question should be super short and super concise, and relevant to the context and objective. Remember, keep it short"
     llm = Ollama(model="gemma")
@@ -100,20 +99,23 @@ def generate_new_queries(goal, node, number_of_queries=2):
     return new_queries
 
 
-def evaluate_confidence_level(goal, context):
+def evaluate_confidence_level(goal, context, query):
     prompt = f'''Based on the goal of {goal}, how confident are you that this context is relevant to the goal? Context: {context}. 
     Respond solely with a confidence level as a float between 0.0 and 1.0, where 0.0 indicates no confidence and 1.0 indicates complete confidence in the context's relevance to the goal. 
     Your answer must strictly be a numerical float, e.g., '0.5', '0.75'. Do not include any text or other characters.'''
     llm = Ollama(model="gemma")
     confidence_level = float(llm.invoke(prompt))
     print(f"Goal: {goal}")
+    print(f"Query: {query}")
     print(f"Context: {context}")
     print(f"Confidence level: {confidence_level}")
     print("")
     return confidence_level
+    
+   
 
 def root_qStar(goal, context):
-    root_node = Node(goal, context, 0, 0)
+    root_node = Node(goal, context, 0.0, 0)
     return qStar(root_node, goal)
 
 
@@ -144,6 +146,9 @@ def explore_child_nodes(current_node, goal, depth_limit):
     if child_nodes:
         # sort children
         sorted_children = sorted(child_nodes, key=lambda node: node.confidence, reverse=True)
+        print("---------------------------------------------------------")
+        for sort_child in sorted_children:
+            print(sort_child.confidence)
         if sorted_children[0].is_goal_reached(): # answer found 
             return sorted_children[0]
         for child in sorted_children:
@@ -154,12 +159,12 @@ def explore_child_nodes(current_node, goal, depth_limit):
     return None
 
 def generate_child_nodes(current_node, goal):
-    new_queries = generate_new_queries(goal, current_node.get_context())
+    new_queries = generate_new_queries(goal, current_node)
     child_nodes = []
     for query in new_queries:
         query_result, metadata, contexts = rag_qstar(query, languageBool=True)
         for context in contexts:
-            confidence = evaluate_confidence_level(goal, context)
+            confidence = evaluate_confidence_level(goal, context, query)
             if confidence < 0.15:
                 continue
             child_node = current_node.add_child(query, context, confidence)

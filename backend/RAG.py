@@ -1,4 +1,5 @@
 from langchain_community.llms import Ollama
+from langchain_community.chat_models import ChatOllama
 from langchain_community.vectorstores import Chroma
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -153,6 +154,7 @@ def get_rag_response(query, languageBool):
     #gemma:7b-instruct-v1.1-q8_0
     llm = Ollama(model="gemma")
     
+    
     prompt = prompty(languageBool)
     qa = RetrievalQA.from_chain_type(
         llm=llm,
@@ -259,7 +261,7 @@ def get_rag_response2(query, languageBool):
     db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
 
     retriever = db.as_retriever(search_kwargs={"k": 4}) # k=3 => 4 sources
-    llm = Ollama(model="qwen:14b")
+    llm = Ollama(model="llama3")
     
     prompt = prompty(languageBool)
     qa = RetrievalQA.from_chain_type(
