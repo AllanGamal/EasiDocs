@@ -55,6 +55,14 @@ public class DocumentIngester {
             JsonObject metaObject = new JsonObject();
             metaObject.addProperty("source", segment.metadata().get("source"));
             metaObject.addProperty("page", segment.metadata().get("page"));
+            // index of the segment of segments
+            int index = segments.indexOf(segment);
+
+            metaObject.addProperty("id", segment.metadata().get("source") + index);
+            
+            
+            
+            
 
             jsonObject.add("metadata", metaObject);
             jsonArray.add(jsonObject);
@@ -62,7 +70,7 @@ public class DocumentIngester {
 
         return gson.toJson(jsonArray);
     }
-
+   
     /*
      * Split a single document into segments
      * returns a list of TextSegments

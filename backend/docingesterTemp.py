@@ -26,6 +26,7 @@ def load_document(file):
     # add filename to metadata
     for doc in new_documents:
         doc.metadata['source'] = filename
+        
 
     # skapa JSON från de nya dokumenten
     new_data = [{'page_content': doc.page_content, 'metadata': doc.metadata} for doc in new_documents]

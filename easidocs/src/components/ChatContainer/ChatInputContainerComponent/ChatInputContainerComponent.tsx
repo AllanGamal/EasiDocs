@@ -103,6 +103,7 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
         <button type="button" className="btn btn-primary" onClick={handleSendClick} disabled={isLoading} >
           {isLoading ? '....' : 'Send'}
         </button>
+        
       </div>
     </div>
   );
