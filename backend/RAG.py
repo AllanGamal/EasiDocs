@@ -214,8 +214,10 @@ def rag_qstar(query, languageBool):
         dataString =  source.metadata.get('source') + ", " + "p." + str(source.metadata.get('page'))
         pageContent = source.page_content
         pageContents.append(pageContent)
-        metadata.append(dataString)
+        metadata.append(source)
     page_contents = pageContents
+    print("Metadata: ")
+    print(metadata)
     return answer, metadata, page_contents
     
     
