@@ -1,7 +1,7 @@
 
 from langchain_community.llms import Ollama
 from langchain_community.chat_models import ChatOllama
-from RAG import rag_qstar
+from RAG import rag_qstar, get_rag_response
 # Example: reuse your existing OpenAI setup
 from openai import OpenAI
 # Point to the local server
@@ -12,6 +12,7 @@ client = OpenAI(base_url="http://localhost:1234/v1", api_key="lm-studio")
 class Node:
     top_10_nodes = []
     previous_questions = []
+    previous_ids = []
     def __init__(self, question, context, confidence, level, query_number, sibling_number, branch_path=[], parent=None):
         self.question = question
         self.context = context
@@ -28,6 +29,7 @@ class Node:
             self.branch_path.append("q" + str(query_number) + "b" + str(sibling_number))
         self.parent = parent
         self.children = []
+        self.explored = False
 
     def add_child(self, question, context, confidence, query_number, sibling_number):
         child_node = Node(question, context, confidence, self.level + 1, query_number, sibling_number, self.branch_path, self)
@@ -74,6 +76,14 @@ class Node:
         return self.level
     
     @staticmethod
+    def get_previous_ids():
+        return Node.previous_ids
+    
+    def update_previous_ids(id):
+        Node.previous_ids.append(id)
+    
+    
+    @staticmethod
     def update_top_10_nodes(node):
         if len(Node.top_10_nodes) < 10:
             Node.top_10_nodes.append(node) 
@@ -85,6 +95,10 @@ class Node:
                 Node.top_10_nodes.append(node)
         
         Node.top_10_nodes = sorted(Node.top_10_nodes, key=lambda node: node.confidence, reverse=True) # sort the list (desc)
+
+    @staticmethod
+    def get_top_10_nodes():
+        return Node.top_10_nodes
 
     @staticmethod
     def add_to_previous_questions(question):
@@ -107,7 +121,25 @@ def get_llm_response(prompt):
     return completion.choices[0].message.content
 
 
+def get_answer(question, context):
+    template = '''
+    Never quote sources.
+    Question: '{question}'
+    Context:
+    '
+    {context}
+    '
 
+    Make a detailed answer, based on the context and the question {question}.
+    If there is no direct, obvious or clear connection between the context and the question, say clearly and then bring up and state potential connections between the context and the question, even if it is somewhat far stretched anv vague. Be creative and explore potential links!
+    '''
+
+    prompt = template.format(question=question, context=context)
+
+    return get_llm_response(prompt)
+    
+    
+    
 
     
 def generate_new_query(goal, node):
@@ -146,16 +178,26 @@ def evaluate_confidence_level(goal, context, query):
 
 def root_qStar(goal, context):
     root_node = Node(goal, context, 0.0, 0, 0, 0)
-    return qStar(root_node, goal)
+    result = qStar(root_node, goal)
+    # print top 10 nodes
+    all_nodes = Node.get_top_10_nodes()
+    contexts = [node.context for node in all_nodes]
+    context = " ".join(contexts)
+    for node in all_nodes:
+        print(f"Top 10 nodes: {node.confidence}")
+
+    answer = get_answer(goal, context)
+    return answer, ["test", "test2"], contexts
 
 
     
-def qStar(current_node, goal, depth_limit=10):
-    if depth_limit == 0 or current_node.is_goal_reached():
+def qStar(current_node, goal, depth_limit=3):
+    if depth_limit == 0 or current_node.is_goal_reached() or current_node.explored:
+
         return current_node
     
-    print(f"Exploring from node: {current_node.get_level()} {current_node.question} with confidence {current_node.confidence}")
-    
+
+    current_node.explored = True
 
     # explore child
     result = explore_child_nodes(current_node, goal, depth_limit)
@@ -169,7 +211,7 @@ def qStar(current_node, goal, depth_limit=10):
         print(f"Goal reached at level {result.get_level()}")
         return result
 
-    # 
+    
     return None
 
 def explore_child_nodes(current_node, goal, depth_limit):
@@ -183,7 +225,7 @@ def explore_child_nodes(current_node, goal, depth_limit):
         if sorted_children[0].is_goal_reached(): # answer found 
             return sorted_children[0]
         for child in sorted_children:
-            if child.confidence > current_node.confidence * 0.9: 
+            if child.confidence > current_node.confidence * 0.9 and not child.explored: 
                 result = qStar(child, goal, depth_limit - 1)
                 if result and result.is_goal_reached():
                     return result
@@ -197,17 +239,23 @@ def generate_child_nodes(current_node, goal):
     child_nodes = []
     for query in new_queries:
         query_number = new_queries.index(query) + 1
-        query_result, metadata, contexts = rag_qstar(query, languageBool=True)
-        for context in contexts:
+        print("test")
+        query_result = rag_qstar(query, languageBool=True)
+        if query_result is None:
+            continue  # Skip if no result
+        ids, contexts = query_result  # Unpacking three values, ignore the third if not needed
+        for context_index, context in enumerate(contexts):
             confidence = evaluate_confidence_level(goal, context, query)
-            sibling_number = contexts.index(context) + 1
             if confidence < 0.15:
-                print(f"Skipping child node with confidence {confidence}, with the branch path {current_node.branch_path}")
+                print(f"Skipping child node with confidence {confidence}, with the branch path {current_node.branch_path}, q{query_number}b{context_index + 1}")
                 continue
-            child_node = current_node.add_child(query, context, confidence, query_number, sibling_number)
+            if ids[context_index] in Node.get_previous_ids():
+                print(f"Skipping child node with repeated id '{ids[context_index]}', with the branch path {current_node.branch_path}, q{query_number}b{context_index + 1}")
+                continue
+            Node.update_previous_ids(ids[context_index])  
+            child_node = current_node.add_child(query, context, confidence, query_number, context_index + 1)
             branch_descriptor = ','.join(f'{b}' for b in child_node.branch_path)
             print(f"Creating child node: lvl{child_node.level},{branch_descriptor} with confidence {confidence}")
-            print("---------------------------------------------------------")
             child_nodes.append(child_node)
             Node.update_top_10_nodes(child_node)
 
@@ -215,15 +263,17 @@ def generate_child_nodes(current_node, goal):
 
 
 
+
 def handle_sibling_nodes(current_node, goal, depth_limit):
-    if current_node.parent: 
-        siblings = [sib for sib in current_node.parent.children if sib != current_node] # 
+    if current_node.parent is None or depth_limit <= 0:
+        # If there is no parent or depth limit has been exhausted, return None
+        return None
+
+    if current_node.parent and depth_limit > 0:
+        siblings = [sib for sib in current_node.parent.children if sib != current_node and not sib.explored]
         sorted_siblings = sorted(siblings, key=lambda node: node.confidence, reverse=True)
         for sibling in sorted_siblings:
-            result = qStar(sibling, goal, depth_limit - 1)
+            result = qStar(sibling, goal, depth_limit)
             if result and result.is_goal_reached():
                 return result
     return None
-
-
-

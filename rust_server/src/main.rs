@@ -185,7 +185,7 @@ async fn delete_doc_from_database(path: String) -> PyResult<()> {
 async fn main() -> std::io::Result<()> {
     
     HttpServer::new(|| { // create a new server
-        let cors = Cors::permissive(); 
+        let cors = Cors::permissive();
 
         App::new() // create a new application
             .wrap(cors) // wrap the application with  cors middleware

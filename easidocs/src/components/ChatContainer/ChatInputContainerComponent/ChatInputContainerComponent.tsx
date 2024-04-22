@@ -35,7 +35,7 @@ function ChatInputContainerComponent({ onSendMessage }: Props) {
       setIsLoading(true);
       onSendMessage({ text: message, type: 'user'});
       setMessage('');
-      axios.post(apiUrl, { message, is_english: isEnglish })
+      axios.post(apiUrl, { message, is_english: isEnglish }, { timeout: 1000*60*60 }) // 1 hour timeout, default seems to be 1min
         .then(response => {
           setIsLoading(false);
           if (response.status === 200) {

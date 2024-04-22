@@ -9,6 +9,7 @@ from langchain_community.embeddings.sentence_transformer import (
 from langchain_community.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from prompt_template import prompt as prompty
+from prompt_template import prompt2 as prompty2
 import os.path
 from subprocess import STDOUT,PIPE
 from sys import stdin
@@ -16,6 +17,9 @@ import subprocess
 from docingesterTemp import load_document_batch
 import json
 from langchain.docstore.document import Document
+from sentence_transformers import SentenceTransformer
+
+
 
 
 
@@ -192,12 +196,17 @@ def get_rag_response(query, languageBool):
 
 def rag_qstar(query, languageBool):
     vector_dir = "../../backend/chromadb/VectorStore" # from server dir
+    print("Loading Embeddings...")
     embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
+    #path = "/Users/allangamal/Documents/GitHub/EasiDocs/backend/eval/testy"
+    #embedding_function = SentenceTransformer(path)
+    print("Embeddings Loaded...")
     db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
     retriever = db.as_retriever(search_kwargs={"k": 4}) # k=3 => 4 sources
-    #gemma:7b-instruct-v1.1-q8_0
-    llm = Ollama(model="gemma")
-    prompt = prompty(languageBool)
+    llm = Ollama(model="gemma:2b")
+    prompt = prompty2(languageBool)
+    
+
     qa = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type="stuff", 
@@ -206,19 +215,22 @@ def rag_qstar(query, languageBool):
         chain_type_kwargs={"prompt": prompt}
     )
     result = qa.invoke(query)
-    answer = result["result"]
     sources = result["source_documents"]
     metadata = []
     pageContents = []
     for source in sources:
-        dataString =  source.metadata.get('source') + ", " + "p." + str(source.metadata.get('page'))
+        dataString =  source.metadata.get('id')
         pageContent = source.page_content
         pageContents.append(pageContent)
-        metadata.append(source)
+        metadata.append(dataString)
     page_contents = pageContents
     print("Metadata: ")
     print(metadata)
-    return answer, metadata, page_contents
+    return metadata, page_contents
+
+
+
+
     
     
 
