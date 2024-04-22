@@ -191,7 +191,7 @@ def root_qStar(goal, context):
 
 
     
-def qStar(current_node, goal, depth_limit=3):
+def qStar(current_node, goal, depth_limit=4):
     if depth_limit == 0 or current_node.is_goal_reached() or current_node.explored:
 
         return current_node
@@ -245,12 +245,12 @@ def generate_child_nodes(current_node, goal):
             continue  # Skip if no result
         ids, contexts = query_result  # Unpacking three values, ignore the third if not needed
         for context_index, context in enumerate(contexts):
+            if ids[context_index] in Node.get_previous_ids():
+                print(f"Skipping child node with repeated id '{ids[context_index]}', with the branch path {current_node.branch_path}, q{query_number}b{context_index + 1}")
+                continue
             confidence = evaluate_confidence_level(goal, context, query)
             if confidence < 0.15:
                 print(f"Skipping child node with confidence {confidence}, with the branch path {current_node.branch_path}, q{query_number}b{context_index + 1}")
-                continue
-            if ids[context_index] in Node.get_previous_ids():
-                print(f"Skipping child node with repeated id '{ids[context_index]}', with the branch path {current_node.branch_path}, q{query_number}b{context_index + 1}")
                 continue
             Node.update_previous_ids(ids[context_index])  
             child_node = current_node.add_child(query, context, confidence, query_number, context_index + 1)
