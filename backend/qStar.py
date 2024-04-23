@@ -14,6 +14,7 @@ class Node:
     previous_questions = []
     previous_ids = []
     longest_branch = ""
+    n_nondes_explored = 0
     def __init__(self, question, context, confidence, level, query_number,  sibling_number, full_branch,branch_path=[],  parent=None):
         self.question = question
         self.context = context
@@ -87,6 +88,10 @@ class Node:
     
     def get_level(self):
         return self.level
+    
+    @staticmethod
+    def update_explored_nodes():
+        Node.n_nondes_explored += 1
     
     @staticmethod
     def get_previous_ids():
@@ -277,6 +282,7 @@ def generate_child_nodes(current_node, goal):
                 print(f"Skipping child node with repeated id '{ids[context_index]}', with the branch path {current_node.branch_path}, q{query_number}b{context_index + 1}")
                 continue
             confidence = evaluate_confidence_level(goal, context, query)
+            Node.update_explored_nodes()
             if confidence <= 0.15:
                 print(f"Skipping child node with confidence {confidence}, with the branch path {current_node.branch_path}, q{query_number}b{context_index + 1}")
                 continue
@@ -292,6 +298,7 @@ def generate_child_nodes(current_node, goal):
                 print(f"Goal reached at level {full_branch}")
                 print(f"Longest branch: {Node.get_longest_branch()}")
                 print(f"Question path: {question_path}")
+                print(f"Number of Explored nodes: {Node.n_nondes_explored}")
                 print("---------------------------------HORRAY---------------------------------")
             child_nodes.append(child_node)
             Node.update_top_10_nodes(child_node)
