@@ -13,7 +13,8 @@ class Node:
     top_10_nodes = []
     previous_questions = []
     previous_ids = []
-    def __init__(self, question, context, confidence, level, query_number, sibling_number, branch_path=[], parent=None):
+    longest_branch = ""
+    def __init__(self, question, context, confidence, level, query_number,  sibling_number, full_branch,branch_path=[],  parent=None):
         self.question = question
         self.context = context
         self.confidence = confidence
@@ -30,11 +31,23 @@ class Node:
         self.parent = parent
         self.children = []
         self.explored = False
+        self.full_branch = full_branch
 
-    def add_child(self, question, context, confidence, query_number, sibling_number):
-        child_node = Node(question, context, confidence, self.level + 1, query_number, sibling_number, self.branch_path, self)
+    def add_child(self, question, context, confidence, query_number, sibling_number, full_branch):
+        child_node = Node(question, context, confidence, self.level + 1, query_number, sibling_number, full_branch, self.branch_path, self)
         self.children.append(child_node)
         return child_node
+    
+    def get_question_path(self):
+        node = self
+        path = []
+        while node is not None:
+            path.append(f"lvl{node.level}q{node.query_number}b{node.sibling_number}, query: {node.question}, cl: {node.confidence}")
+            node = node.parent
+        return path[::-1]
+
+    def get_full_branch(self):
+        return self.full_branch
     
     def get_number(self):
         return self.query_number
@@ -56,10 +69,10 @@ class Node:
         self.confidence = confidence
     
     def is_goal_reached(self, tresholad_confidence_level=0.85):
-        return self.confidence >= tresholad_confidence_level
+        return self.confidence > tresholad_confidence_level
     
     def get_ancestors(self):
-        """ Returns a list of ancestor nodes leading up to this node, including the current node. """
+        
         node = self
         ancestors = []
         while node:
@@ -81,6 +94,15 @@ class Node:
     
     def update_previous_ids(id):
         Node.previous_ids.append(id)
+
+    @staticmethod
+    def update_longest_branch(branch):
+        if len(branch) >= len(Node.longest_branch):
+            Node.longest_branch = branch
+    
+    @staticmethod
+    def get_longest_branch():
+        return Node.longest_branch
     
     
     @staticmethod
@@ -113,7 +135,7 @@ def get_llm_response(prompt):
     completion = client.chat.completions.create(
         model="QuantFactory/Meta-Llama-3-8B-Instruct-GGUF",
         messages=[
-            {"role": "system", "content": "You are an intelligent assistant. You always provide well-reasoned answers that are both correct and helpful."},
+            {"role": "system", "content": "You are an intelligent assistant. You always provide well-reasoned answers that are both correct and helpful. You will never reason from your own knowledge, only deduce from the context and question provided. Never use the '*' character."},
     {"role": "user", "content": prompt}
         ],
         temperature=0.0,
@@ -131,7 +153,9 @@ def get_answer(question, context):
     '
 
     Make a detailed answer, based on the context and the question {question}.
-    If there is no direct, obvious or clear connection between the context and the question, say clearly and then bring up and state potential connections between the context and the question, even if it is somewhat far stretched anv vague. Be creative and explore potential links!
+    If there is no direct, obvious or clear connection between the context and the question, say clearly and then bring up and state potential connections between the context and the question, even if it is somewhat far stretched anv vague. 
+    Only deduce connections from the context and question provided.
+    Be creative and explore potential links!
     '''
 
     prompt = template.format(question=question, context=context)
@@ -145,7 +169,7 @@ def get_answer(question, context):
 def generate_new_query(goal, node):
     context = node.get_context()
     previous_questions = Node.get_previous_questions()
-    prompt = f"With the objective in mind on the mind: '{goal}', what kind of a general question about the context do you think could be the answer the objective? Context: '{context}'. Dont generate any questions that is same or similar to the previous questions. Previous questions that must not be repeated or must not be similar: '{previous_questions}'. The question could be more general about the objective, but must be super short and super concise, and relevant (directly or inderectly) to the context and objective. Dont reason how to get the question, just state the question in one short sentence. Remember, Dont generate any questions that is same or similar to the previous questions., and keep it short."
+    prompt = f"With the objective in mind on the mind: '{goal}', what kind of a general question about the context do you think could be the answer the objective? Context: '{context}'. Dont generate any questions that is same or similar to the previous questions. Previous questions that must not be repeated or must not be similar: '{previous_questions}'. The question could be more general about the objective, but must be super short and super concise, and relevant (directly or inderectly) to the context and objective. Dont reason how to get the question, just state the question in one short sentence. Remember, Dont generate any questions that is same or similar to the previous questions, and keep it short."
     new_query = get_llm_response(prompt)
     return new_query
 
@@ -162,8 +186,8 @@ def generate_new_queries(goal, node, number_of_queries=2):
 
 def evaluate_confidence_level(goal, context, query):
     prompt = f'''Based on the goal '{goal}', how confident are you that this context could be relevant to the goal? Context: '{context}'. 
-    Respond solely with a confidence level as a float between 0.0 and 1.0, where 0.0 indicates no confidence and 1.0 indicates complete confidence in the context's relevance to the goal. 
-    Your answer must strictly be a numerical float, e.g., '0.5', '0.75'. Do not include any text or other characters.'''
+    Respond solely with a confidence level as a float between 0.00 and 1.00, where 0.00 indicates no confidence and 1.00 indicates complete confidence in the context's relevance to the goal. 
+    Your answer must strictly be a numerical float, e.g., '0.51', '0.72' and so on. Do not include any text or other characters.'''
     #llm = Ollama(model="gemma")
     #confidence_level = float(llm.invoke(prompt))
     confidence_level = float(get_llm_response(prompt))
@@ -177,11 +201,15 @@ def evaluate_confidence_level(goal, context, query):
    
 
 def root_qStar(goal, context):
-    root_node = Node(goal, context, 0.0, 0, 0, 0)
+    meta, contents = rag_qstar(goal, languageBool=True)
+    context = " ".join(contents)
+    print(f"Context: {context}")
+    root_node = Node(goal, context, 0.0, 0, 0, 0, "")
     result = qStar(root_node, goal)
     # print top 10 nodes
     all_nodes = Node.get_top_10_nodes()
     contexts = [node.context for node in all_nodes]
+    context = " "
     context = " ".join(contexts)
     for node in all_nodes:
         print(f"Top 10 nodes: {node.confidence}")
@@ -191,7 +219,7 @@ def root_qStar(goal, context):
 
 
     
-def qStar(current_node, goal, depth_limit=4):
+def qStar(current_node, goal, depth_limit=3):
     if depth_limit == 0 or current_node.is_goal_reached() or current_node.explored:
 
         return current_node
@@ -249,19 +277,28 @@ def generate_child_nodes(current_node, goal):
                 print(f"Skipping child node with repeated id '{ids[context_index]}', with the branch path {current_node.branch_path}, q{query_number}b{context_index + 1}")
                 continue
             confidence = evaluate_confidence_level(goal, context, query)
-            if confidence < 0.15:
+            if confidence <= 0.15:
                 print(f"Skipping child node with confidence {confidence}, with the branch path {current_node.branch_path}, q{query_number}b{context_index + 1}")
                 continue
             Node.update_previous_ids(ids[context_index])  
-            child_node = current_node.add_child(query, context, confidence, query_number, context_index + 1)
-            branch_descriptor = ','.join(f'{b}' for b in child_node.branch_path)
-            print(f"Creating child node: lvl{child_node.level},{branch_descriptor} with confidence {confidence}")
+            branch_descriptor = ','.join(f'{b}' for b in current_node.branch_path)
+            full_branch = f"lvl{current_node.level + 1},{branch_descriptor} q{query_number}b{context_index + 1}"
+            child_node = current_node.add_child(query, context, confidence, query_number, context_index + 1, full_branch)
+            Node.update_longest_branch(full_branch)
+            print(f"Creating child node: {full_branch} with confidence {confidence}")
+            if child_node.is_goal_reached():
+                question_path = child_node.get_question_path()
+                print("---------------------------------HORRAY---------------------------------")
+                print(f"Goal reached at level {full_branch}")
+                print(f"Longest branch: {Node.get_longest_branch()}")
+                print(f"Question path: {question_path}")
+                print("---------------------------------HORRAY---------------------------------")
             child_nodes.append(child_node)
             Node.update_top_10_nodes(child_node)
 
     return child_nodes
 
-
+ 
 
 
 def handle_sibling_nodes(current_node, goal, depth_limit):
