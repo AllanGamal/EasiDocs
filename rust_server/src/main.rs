@@ -30,7 +30,7 @@ async fn handle_message(message: web::Json<Message>) -> impl Responder {
 
     match execute_rag_query(query, is_english).await {
         Ok((answer, metadata, page_contents)) => {
-            println!("Answer: {}", page_contents.join(", "));
+            
             HttpResponse::Ok().json(serde_json::json!({ "answer": answer, "metadata": metadata, "pageContents": page_contents}))
         }
         Err(e) => {

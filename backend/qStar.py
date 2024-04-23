@@ -15,6 +15,7 @@ class Node:
     previous_ids = []
     longest_branch = ""
     n_nondes_explored = 0
+    n_previous_explored_nodes = 0
     def __init__(self, question, context, confidence, level, query_number,  sibling_number, full_branch,branch_path=[],  parent=None):
         self.question = question
         self.context = context
@@ -92,6 +93,14 @@ class Node:
     @staticmethod
     def update_explored_nodes():
         Node.n_nondes_explored += 1
+
+    @staticmethod
+    def update_previous_explored_nodes():
+        Node.n_previous_explored_nodes += 1
+    
+    @staticmethod
+    def get_n_previous_explored_nodes():
+        return Node.n_previous_explored_nodes
     
     @staticmethod
     def get_previous_ids():
@@ -179,7 +188,7 @@ def generate_new_query(goal, node):
     return new_query
 
 
-def generate_new_queries(goal, node, number_of_queries=2):
+def generate_new_queries(goal, node, number_of_queries=4):
     new_queries = []
     for i in range(number_of_queries):
         query = generate_new_query(goal, node)
@@ -192,7 +201,7 @@ def generate_new_queries(goal, node, number_of_queries=2):
 def evaluate_confidence_level(goal, context, query):
     prompt = f'''Based on the goal '{goal}', how confident are you that this context could be relevant to the goal? Context: '{context}'. 
     Respond solely with a confidence level as a float between 0.00 and 1.00, where 0.00 indicates no confidence and 1.00 indicates complete confidence in the context's relevance to the goal. 
-    Your answer must strictly be a numerical float, e.g., '0.51', '0.72' and so on. Do not include any text or other characters.'''
+    Your answer must strictly be a single numerical float, e.g., '0.51', '0.72' and so on. Do not include any text or other characters other than the float.'''
     #llm = Ollama(model="gemma")
     #confidence_level = float(llm.invoke(prompt))
     confidence_level = float(get_llm_response(prompt))
@@ -219,12 +228,19 @@ def root_qStar(goal, context):
     for node in all_nodes:
         print(f"Top 10 nodes: {node.confidence}")
 
+    print("---------------------------------HORRAY---------------------------------")
+    print("---------------------------------HORRAY---------------------------------")
+    print(f"Number of Explored nodes: {Node.n_nondes_explored}")
+    print(f"Number of Previous explored nodes: {Node.n_previous_explored_nodes}")
+    print(f"Context: {context}")
+    print("---------------------------------HORRAY---------------------------------")
+    print("---------------------------------HORRAY---------------------------------")
     answer = get_answer(goal, context)
     return answer, ["test", "test2"], contexts
 
 
     
-def qStar(current_node, goal, depth_limit=3):
+def qStar(current_node, goal, depth_limit=7):
     if depth_limit == 0 or current_node.is_goal_reached() or current_node.explored:
 
         return current_node
@@ -278,11 +294,13 @@ def generate_child_nodes(current_node, goal):
             continue  # Skip if no result
         ids, contexts = query_result  # Unpacking three values, ignore the third if not needed
         for context_index, context in enumerate(contexts):
+            Node.update_explored_nodes()
+            
             if ids[context_index] in Node.get_previous_ids():
+                Node.update_previous_explored_nodes()
                 print(f"Skipping child node with repeated id '{ids[context_index]}', with the branch path {current_node.branch_path}, q{query_number}b{context_index + 1}")
                 continue
             confidence = evaluate_confidence_level(goal, context, query)
-            Node.update_explored_nodes()
             if confidence <= 0.15:
                 print(f"Skipping child node with confidence {confidence}, with the branch path {current_node.branch_path}, q{query_number}b{context_index + 1}")
                 continue
@@ -295,13 +313,16 @@ def generate_child_nodes(current_node, goal):
             if child_node.is_goal_reached():
                 question_path = child_node.get_question_path()
                 print("---------------------------------HORRAY---------------------------------")
+                print("---------------------------------HORRAY---------------------------------")
                 print(f"Goal reached at level {full_branch}")
                 print(f"Longest branch: {Node.get_longest_branch()}")
                 print(f"Question path: {question_path}")
                 print(f"Number of Explored nodes: {Node.n_nondes_explored}")
                 print("---------------------------------HORRAY---------------------------------")
+                print("---------------------------------HORRAY---------------------------------")
             child_nodes.append(child_node)
             Node.update_top_10_nodes(child_node)
+            
 
     return child_nodes
 

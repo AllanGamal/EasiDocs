@@ -156,7 +156,7 @@ def get_rag_response(query, languageBool):
 
     retriever = db.as_retriever(search_kwargs={"k": 4}) # k=3 => 4 sources
     #gemma:7b-instruct-v1.1-q8_0
-    llm = Ollama(model="gemma")
+    llm = Ollama(model="llama3")
     
     
     prompt = prompty(languageBool)
