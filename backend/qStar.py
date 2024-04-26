@@ -6,8 +6,33 @@ from RAG import rag_qstar, get_rag_response
 from openai import OpenAI
 # Point to the local server
 client = OpenAI(base_url="http://localhost:1234/v1", api_key="lm-studio")
+api_key = 'ApiKey'
 
+clienty = OpenAI(api_key=api_key)
 
+evalQuestions = [
+    "How can one gain better control over my emotions?",
+    "How can I increase my productivity?",
+    "How can I enhance my focus?",
+    "Why is continuous learning important for personal development?",
+    "How can one overcome the fear of failure?",
+    "What routines can I do to improve my mental health?",
+    "What are the key factors in building successful business partnerships?",
+    "How do you identify the right business partner for a startup?",
+    "How do I get happier?",
+    "What are the biggest challenges in establishing partnerships?",
+    "What habits should I form to be happier?",
+    "What habits should I avoid?",
+    "How do I form a new habit?",
+    "How should I raise my kids?",
+    "How do I break a bad habit?",
+    "How do I enhance my learning capabilities?",
+    "What are some good techniques for learning?",
+    "How can setting personal goals contribute to a sense of fulfillment?",
+    "How can one find a balance between work and free time to maximize happiness?",
+    "How do I find love?"
+    "How do I find a life partner?",
+]
 
 class Node:
     top_10_nodes = []
@@ -16,10 +41,15 @@ class Node:
     longest_branch = ""
     n_nondes_explored = 0
     n_previous_explored_nodes = 0
+    confidence_counts = {}
     def __init__(self, question, context, confidence, level, query_number,  sibling_number, full_branch,branch_path=[],  parent=None):
         self.question = question
         self.context = context
         self.confidence = confidence
+        if confidence in Node.confidence_counts:
+            Node.confidence_counts[confidence] += 1
+        else:
+            Node.confidence_counts[confidence] = 1
         self.level = level
         self.query_number = query_number
         self.sibling_number = sibling_number
@@ -144,10 +174,31 @@ class Node:
     def get_previous_questions():
         return Node.previous_questions
     
+    @staticmethod
+    def reset():
+        Node.top_10_nodes = []
+        Node.previous_questions = []
+        Node.previous_ids = []
+        Node.longest_branch = ""
+        Node.n_nondes_explored = 0
+        Node.n_previous_explored_nodes = 0
+        Node.confidence_counts = {}
+    
 
 def get_llm_response(prompt):
     completion = client.chat.completions.create(
         model="QuantFactory/Meta-Llama-3-8B-Instruct-GGUF",
+        messages=[
+            {"role": "system", "content": "You are an intelligent assistant. You always provide well-reasoned answers that are both correct and helpful. You will never reason from your own knowledge, only deduce from the context and question provided. Never use the '*' character."},
+    {"role": "user", "content": prompt}
+        ],
+        temperature=0.0,
+    )
+    return completion.choices[0].message.content
+
+def get_llm_response_gpt(prompt):
+    completion = clienty.chat.completions.create(
+        model="gpt-4-turbo-2024-04-09",
         messages=[
             {"role": "system", "content": "You are an intelligent assistant. You always provide well-reasoned answers that are both correct and helpful. You will never reason from your own knowledge, only deduce from the context and question provided. Never use the '*' character."},
     {"role": "user", "content": prompt}
@@ -188,7 +239,7 @@ def generate_new_query(goal, node):
     return new_query
 
 
-def generate_new_queries(goal, node, number_of_queries=4):
+def generate_new_queries(goal, node, number_of_queries=3):
     new_queries = []
     for i in range(number_of_queries):
         query = generate_new_query(goal, node)
@@ -204,7 +255,7 @@ def evaluate_confidence_level(goal, context, query):
     Your answer must strictly be a single numerical float, e.g., '0.51', '0.72' and so on. Do not include any text or other characters other than the float.'''
     #llm = Ollama(model="gemma")
     #confidence_level = float(llm.invoke(prompt))
-    confidence_level = float(get_llm_response(prompt))
+    confidence_level = float(get_llm_response_gpt(prompt))
     print("---------------------------------------------------------")
     print(f"Goal: {goal}")
     print(f"Query: {query}")
@@ -223,8 +274,23 @@ def root_qStar(goal, context):
     # print top 10 nodes
     all_nodes = Node.get_top_10_nodes()
     contexts = [node.context for node in all_nodes]
+        
+    for context in contexts:
+        print(f"Context " + str(contexts.index(context) + 1) + ": " + context)
     context = " "
-    context = " ".join(contexts)
+    context = "\n".join([f"Context {i+1}: {c}" for i, c in enumerate(contexts)])
+    print("≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠")
+    print("")
+    print("")
+    print(f'''I am evaluating my RAG-system. And I want you to do it for me. 
+    Before you grade the context, I want you to reason the relevancy of the context and the question.
+    I want you to score (0-100) how my  contexts could be  relevance based on my question, grade every context:
+    Question: {goal}
+    context: {context}
+    After grading each one, I want you to calculate the average of the score''')
+    print("")
+    print("")
+    print("≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠")
     for node in all_nodes:
         print(f"Top 10 nodes: {node.confidence}")
 
@@ -232,15 +298,18 @@ def root_qStar(goal, context):
     print("---------------------------------HORRAY---------------------------------")
     print(f"Number of Explored nodes: {Node.n_nondes_explored}")
     print(f"Number of Previous explored nodes: {Node.n_previous_explored_nodes}")
-    print(f"Context: {context}")
+    #print(f"Context: {context}")
+        
+    for confidence, count in Node.confidence_counts.items():
+        print(f"Confidence level {confidence}: {count} occurrences")
     print("---------------------------------HORRAY---------------------------------")
     print("---------------------------------HORRAY---------------------------------")
-    answer = get_answer(goal, context)
+    answer = get_answer(goal, "context")
     return answer, ["test", "test2"], contexts
 
 
     
-def qStar(current_node, goal, depth_limit=7):
+def qStar(current_node, goal, depth_limit=4):
     if depth_limit == 0 or current_node.is_goal_reached() or current_node.explored:
 
         return current_node
@@ -342,3 +411,5 @@ def handle_sibling_nodes(current_node, goal, depth_limit):
             if result and result.is_goal_reached():
                 return result
     return None
+
+

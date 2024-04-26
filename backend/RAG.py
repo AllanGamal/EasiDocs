@@ -154,9 +154,9 @@ def get_rag_response(query, languageBool):
     embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
     db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
 
-    retriever = db.as_retriever(search_kwargs={"k": 4}) # k=3 => 4 sources
+    retriever = db.as_retriever(search_kwargs={"k": 10}) # k=3 => 4 sources
     #gemma:7b-instruct-v1.1-q8_0
-    llm = Ollama(model="llama3")
+    llm = Ollama(model="mistral")
     
     
     prompt = prompty(languageBool)
@@ -189,6 +189,12 @@ def get_rag_response(query, languageBool):
     page_contents = pageContents
     print(answer)
 
+    # print page contents
+    
+    for page in page_contents:
+        print(f"Context " + str(page_contents.index(page) + 1) + ": ")
+        print(page)
+
 
 
     return answer, metadata, page_contents
@@ -202,7 +208,7 @@ def rag_qstar(query, languageBool):
     #embedding_function = SentenceTransformer(path)
     print("Embeddings Loaded...")
     db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
-    retriever = db.as_retriever(search_kwargs={"k": 4}) # k=3 => 4 sources
+    retriever = db.as_retriever(search_kwargs={"k": 2}) # k=3 => 4 sources
     llm = Ollama(model="gemma:2b")
     prompt = prompty2(languageBool)
     
@@ -245,10 +251,7 @@ evalQuestions = [
     "What are the key factors in building successful business partnerships?",
     "How do you identify the right business partner for a startup?",
     "How do I get happier?",
-    "How can setting personal goals contribute to a sense of fulfillment?",
     "What are the biggest challenges in establishing partnerships?",
-    "How can one find a balance between work and free time to maximize happiness?",
-    "How do I find a life partner?",
     "What habits should I form to be happier?",
     "What habits should I avoid?",
     "How do I form a new habit?",
@@ -256,6 +259,10 @@ evalQuestions = [
     "How do I break a bad habit?",
     "How do I enhance my learning capabilities?",
     "What are some good techniques for learning?",
+    "How can setting personal goals contribute to a sense of fulfillment?",
+    "How can one find a balance between work and free time to maximize happiness?",
+    "How do I find love?"
+    "How do I find a life partner?",
 ]
 
 
