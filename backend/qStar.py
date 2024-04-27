@@ -255,7 +255,7 @@ def evaluate_confidence_level(goal, context, query):
     Your answer must strictly be a single numerical float, e.g., '0.51', '0.72' and so on. Do not include any text or other characters other than the float.'''
     #llm = Ollama(model="gemma")
     #confidence_level = float(llm.invoke(prompt))
-    confidence_level = float(get_llm_response_gpt(prompt))
+    confidence_level = float(get_llm_response(prompt))
     print("---------------------------------------------------------")
     print(f"Goal: {goal}")
     print(f"Query: {query}")
@@ -309,7 +309,7 @@ def root_qStar(goal, context):
 
 
     
-def qStar(current_node, goal, depth_limit=4):
+def qStar(current_node, goal, depth_limit=5):
     if depth_limit == 0 or current_node.is_goal_reached() or current_node.explored:
 
         return current_node
