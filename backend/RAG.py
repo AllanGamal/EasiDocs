@@ -154,7 +154,7 @@ def get_rag_response(query, languageBool):
     embedding_function = SentenceTransformerEmbeddings(model_name="intfloat/multilingual-e5-large")
     db = Chroma(persist_directory=vector_dir, embedding_function=embedding_function) # load from the saved folder
 
-    retriever = db.as_retriever(search_kwargs={"k": 10}) # k=3 => 4 sources
+    retriever = db.as_retriever(search_kwargs={"k": 5}) # k=3 => 4 sources
     #gemma:7b-instruct-v1.1-q8_0
     llm = Ollama(model="mistral")
     
