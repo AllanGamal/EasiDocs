@@ -1,6 +1,6 @@
 # EasiDocs
 
-![Alt Text](readmestuff/return_winner_v2.png)
+![Alt Text](readmestuff/return_winner_v2.png){:height="50%" width="50%"}
 
 # Q*-Algorithm (Query Refined)
 
@@ -24,13 +24,20 @@ Within the RAG system, the Q*-algorithm uses retrieved information as context to
 ## Step-by-Step Description of Q*-Algorithm
 
 - **Define the Goal:** Identify the search's objective, typically to find the most relevant information for a user query.
+![Alt Text](readmestuff/define_goal_v2.png){:height="50%" width="50%"}
 - **Retrieve Initial Context:** Retrieve an initial context from the RAG system based on the user's query, serving as the search's starting point.
+![Alt Text](readmestuff/retrieve_initial_context_v2.png){:height="50%" width="50%"}
 - **Generate New Queries:** Generate new queries using the initial context to navigate through the database for more relevant information.
+![Alt Text](readmestuff/generate_new_queries_v2.png){:height="50%" width="50%"}
 - **Evaluate Retrieved Information with Confidence Levels:** Assign confidence levels to information based on its relevance to the goal.
+![Alt Text](readmestuff/evaluate_contesxt_v2.png){:height="50%" width="50%"}
 - **Prioritize Path Exploration:** Focus on exploring paths with nodes that have the highest confidence levels.
+![Alt Text](readmestuff/prio2_v2.png){:height="50%" width="50%"}
 - **Expand Search Tree:** Add child nodes representing new contexts retrieved through additional queries.
 - **Repeat the Process:** Continue reassessing and generating new queries based on paths with the highest heuristic values until the confidence level meets or exceeds a set threshold.
+![Alt Text](readmestuff/repeaty.png){:height="100%" width="100%"}
 - **Return the Optimal Nodes:** Return nodes that meet the high confidence threshold as the most relevant to the query.
+![Alt Text](readmestuff/returny.png){:height="50%" width="50%"}
 
 ## Performance
 
