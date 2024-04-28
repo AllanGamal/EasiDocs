@@ -1,7 +1,16 @@
 # EasiDocs
 
-<img src="readmestuff/return_winner_v2.png" alt="Alt Text" width="55%" height="55%">
-<img src="readmestuff/ed1.png" alt="Alt Text" width="55%" height="55%">
+<img src="readmestuff/ed1.png" alt="Alt Text" width="50%" height="50%"> <img src="readmestuff/return_winner_v2.png" alt="Alt Text" width="49%" height="49%"> 
+
+###### TL;DR 
+##### Q*-Algorithm enhanced RAG system by using language model confidence levels to enhance information retrieval, outperforming the native system by up to 34% in challenging scenarios. It focuses on strategic path exploration and dynamic query generation, achieving a 9% average improvement, making it effective for complex queries in noisy environments.
+
+
+# Project Description
+This is a project to build a useful RAG-system that aims to improve the performance of the RAG system by introducing the Q*-algorithm.
+
+# RAG (Retrieval-Augmented Generation)
+Retrieval-Augmented Generation (RAG) is a technology that combines information retrieval through a semantic search and text generation. This technology enables users to "chat" with their documents, using the stored data and the context provided by the queries to generate accurate and meaningful responses. 
 
 # Q*-Algorithm (Query Refined)
 
@@ -50,3 +59,7 @@ Within the RAG system, the Q*-algorithm uses retrieved information as context to
 ## Performance
 
 The Q*-enhanced RAG-system showed a 9% higher score on average than the native RAG-system, indicating its efficacy in finding more relevant and higher quality information. Specifically, in the lowest-performing 25% of retrievals by the native system, the Q*-algorithm achieved scores 34% higher on average, suggesting significant improvements in cases where initially retrieved information is less relevant.
+
+
+##### Embedding Model: multilingual-e5-large
+##### LLM: Llama-3-8b
