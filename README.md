@@ -10,7 +10,7 @@
 This is a project to build a useful RAG-system that aims to improve the performance of the RAG system by introducing the Q*-algorithm.
 
 # RAG (Retrieval-Augmented Generation)
-Retrieval-Augmented Generation (RAG) is a technology that combines information retrieval through a semantic search and text generation. This technology enables users to "chat" with their documents, using the stored data and the context provided by the queries to generate accurate and meaningful responses. 
+Retrieval-Augmented Generation (RAG) is a technology that combines information retrieval through a semantic search and text generation. This technology enables users to "chat" with their documents, using the stored data and the context provided by the queries for the (local) LLM to generate accurate and meaningful responses. 
 
 # Q*-Algorithm (Query Refined)
 
