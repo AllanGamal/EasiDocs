@@ -5,6 +5,7 @@ from RAG import rag_qstar, get_rag_response
 # Example: reuse your existing OpenAI setup
 from openai import OpenAI
 # Point to the local server
+
 client = OpenAI(base_url="http://localhost:1234/v1", api_key="lm-studio")
 api_key = 'ApiKey'
 
@@ -279,18 +280,7 @@ def root_qStar(goal, context):
         print(f"Context " + str(contexts.index(context) + 1) + ": " + context)
     context = " "
     context = "\n".join([f"Context {i+1}: {c}" for i, c in enumerate(contexts)])
-    print("≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠")
-    print("")
-    print("")
-    print(f'''I am evaluating my RAG-system. And I want you to do it for me. 
-    Before you grade the context, I want you to reason the relevancy of the context and the question.
-    I want you to score (0-100) how my  contexts could be  relevance based on my question, grade every context:
-    Question: {goal}
-    context: {context}
-    After grading each one, I want you to calculate the average of the score''')
-    print("")
-    print("")
-    print("≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠")
+ 
     for node in all_nodes:
         print(f"Top 10 nodes: {node.confidence}")
 
